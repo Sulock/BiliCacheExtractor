@@ -1,6 +1,6 @@
 # Bilibili 缓存提取器
 
-[English](README.md) | **简体中文**
+[English](README.md) | **简体中文** | [繁體中文](README.zh-TW.md)
 
 <img src="assets/app-icon.png" width="96" alt="Bilibili 缓存提取器图标">
 

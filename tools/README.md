@@ -1,6 +1,6 @@
 # FFmpeg setup / 媒体工具配置
 
-[English README](../README.md) | [简体中文说明](../README.zh-CN.md)
+[English README](../README.md) | [简体中文说明](../README.zh-CN.md) | [繁體中文說明](../README.zh-TW.md)
 
 ## English
 

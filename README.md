@@ -1,6 +1,6 @@
 # BiliCacheExtractor
 
-**English** | [简体中文](README.zh-CN.md)
+**English** | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md)
 
 <img src="assets/app-icon.png" width="96" alt="BiliCacheExtractor icon">
 
