@@ -1,0 +1,9 @@
+* text=auto
+*.cs text
+*.ps1 text
+*.py text
+*.md text
+*.svg text
+*.manifest text
+*.png binary
+*.ico binary

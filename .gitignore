@@ -1,0 +1,40 @@
+# Local preferences and extracted user media
+/settings.json
+/提取的视频/
+
+# Local investigation, test output and release staging
+/analysis/
+/verification/
+/release/
+/release-*/
+/dist/
+/GITHUB_OPEN_SOURCE_PLAYBOOK.zh-CN.md
+
+# Built applications and separately obtained media tools
+/BiliCacheExtractor.exe
+/BiliCacheExtractor.Cli.exe
+/sp.exe
+/ffmpeg-master-latest-win64-gpl-shared/
+/ffmpeg-master-latest-win64-gpl-shared.zip
+/ffmpeg.exe
+/ffprobe.exe
+/tools/*.exe
+/tools/*.dll
+
+# Build and editor output
+bin/
+obj/
+.vs/
+__pycache__/
+*.pyc
+*.pdb
+*.user
+*.suo
+
+# Local secrets
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.key
