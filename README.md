@@ -33,6 +33,12 @@ Tested on **Windows 11 23H2 x64 with .NET Framework 4.8.1**. The build targets x
 
 The offline package contains the compiled GUI/CLI, the local FFmpeg build and the matching application source ZIP. FFmpeg's license and source information are retained as `tools/ffmpeg/LICENSE.txt` and `tools/ffmpeg/SOURCE-INFO.txt`. The same Release provides [FFmpeg source and build materials](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/FFmpeg-N-128122-source-build-kit.zip); see [source locations and build instructions](third_party/FFMPEG-SOURCES.md). The included FFmpeg can use CPU encoding when a GPU driver does not support its NVENC API.
 
+### Older NVIDIA drivers
+
+The separate [1.3.1 legacy-driver Release](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.3.1-legacy) adds a one-time setup for FFmpeg 4.2.2. Download its [Windows x64 package](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1-legacy/BiliCacheExtractor-v1.3.1-legacy-win-x64.zip), extract it, run `Install-Legacy-FFmpeg.cmd` with internet access (22 MB), then start the application. Subsequent use is offline. The downloaded executable is identical to the original local compatibility tool. NVIDIA H.264 and H.265 passed on RTX 4060 Ti with driver 560.94; automatic mode selects the compatible encoder after probing it. See [setup, provenance and license](LEGACY-FFMPEG.md).
+
+To build this release variant, add `-LegacySetup` to the `package.ps1` command below. Its application version remains 1.3.1; the `-legacy` suffix identifies the packaging variant.
+
 ### Build from source
 
 1. Extract the source ZIP or clone this repository.

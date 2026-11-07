@@ -1,10 +1,11 @@
 # SPDX-License-Identifier: GPL-3.0-only
-param([string]$Version = '1.3.1', [string]$Commit = 'HEAD', [string]$OutputDirectory,
+param([string]$Version = '1.3.1', [string]$Commit = 'HEAD', [string]$OutputDirectory, [switch]$LegacySetup,
     [string]$FFmpegDirectory, [Parameter(Mandatory=$true)][string]$FFmpegSourceArchive)
 $ErrorActionPreference = 'Stop'
 $packageRoot = [IO.Path]::GetFullPath($PSScriptRoot)
 if ($Version -notmatch '^\d+\.\d+\.\d+$') { throw 'Version must use major.minor.patch.' }
-if (-not $OutputDirectory) { $OutputDirectory = 'release-v' + $Version }
+$releaseVersion = if ($LegacySetup) { $Version + '-legacy' } else { $Version }
+if (-not $OutputDirectory) { $OutputDirectory = 'release-v' + $releaseVersion }
 if (-not [IO.Path]::IsPathRooted($OutputDirectory)) { $OutputDirectory = Join-Path $packageRoot $OutputDirectory }
 $packageOutput = [IO.Path]::GetFullPath($OutputDirectory)
 if (-not $packageOutput.StartsWith($packageRoot.TrimEnd('\') + '\', [StringComparison]::OrdinalIgnoreCase)) {
@@ -12,7 +13,7 @@ if (-not $packageOutput.StartsWith($packageRoot.TrimEnd('\') + '\', [StringCompa
 }
 $packageCommit = (& git -C $packageRoot rev-parse --verify ($Commit + '^{commit}')).Trim()
 if ($LASTEXITCODE -ne 0 -or $packageCommit -notmatch '^[0-9a-f]{40}$') { throw 'Cannot resolve the source commit.' }
-$packageName = 'BiliCacheExtractor-v' + $Version
+$packageName = 'BiliCacheExtractor-v' + $releaseVersion
 $sourceName = $packageName + '-source.zip'
 $portableName = $packageName + '-win-x64.zip'
 $ffmpegSourceName = 'FFmpeg-N-128122-source-build-kit.zip'
@@ -46,17 +47,21 @@ New-Item -ItemType Directory -Path (Join-Path $portableRoot 'tools') -Force | Ou
 $portableFiles = @(
     'BiliCacheExtractor.exe', 'BiliCacheExtractor.Cli.exe',
     'README.md', 'README.zh-CN.md', 'README.zh-TW.md', 'START-HERE.txt',
-    'LICENSE', 'THIRD_PARTY_NOTICES.md'
+    'LICENSE', 'THIRD_PARTY_NOTICES.md', 'LEGACY-FFMPEG.md'
 )
+if ($LegacySetup) { $portableFiles += @('Install-Legacy-FFmpeg.cmd', 'Install-Legacy-FFmpeg.ps1') }
 foreach ($portableFile in $portableFiles) {
     Copy-Item -LiteralPath (Join-Path $sourceRoot $portableFile) -Destination (Join-Path $portableRoot $portableFile)
 }
-foreach ($toolFile in @('README.md', 'ffmpeg.lock.json', 'ffmpeg-bundle.lock.json')) {
+foreach ($toolFile in @('README.md', 'ffmpeg.lock.json', 'ffmpeg-bundle.lock.json', 'ffmpeg-compat.lock.json')) {
     Copy-Item -LiteralPath (Join-Path $sourceRoot ('tools\' + $toolFile)) -Destination (Join-Path $portableRoot ('tools\' + $toolFile))
 }
 Copy-Item -LiteralPath (Join-Path $sourceRoot 'assets') -Destination $portableRoot -Recurse
 Copy-Item -LiteralPath (Join-Path $sourceRoot 'third_party') -Destination $portableRoot -Recurse
 Copy-Item -LiteralPath $sourceZip -Destination (Join-Path $portableRoot $sourceName)
+if ($LegacySetup) {
+    Copy-Item -LiteralPath (Join-Path $sourceRoot 'START-LEGACY.txt') -Destination (Join-Path $portableRoot 'START-HERE.txt') -Force
+}
 foreach ($runtimeFile in $bundleLock.runtimeFiles) {
     $inputPath = [IO.Path]::GetFullPath((Join-Path $FFmpegDirectory $runtimeFile.path))
     if (-not $inputPath.StartsWith($FFmpegDirectory.TrimEnd('\') + '\', [StringComparison]::OrdinalIgnoreCase)) { throw 'FFmpeg runtime file escapes its input directory.' }
@@ -75,13 +80,15 @@ $ffmpegSourceInfo = @(
     ('FFmpeg ' + $bundleLock.version)
     ('License: ' + $bundleLock.license)
     ('FFmpeg source commit: ' + $bundleLock.sourceCommit)
-    ('Source and build kit: https://github.com/Sulock/BiliCacheExtractor/releases/download/v' + $Version + '/' + $ffmpegSourceName)
+    ('Source and build kit: https://github.com/Sulock/BiliCacheExtractor/releases/download/v' + $releaseVersion + '/' + $ffmpegSourceName)
     'Dependency source repositories and revisions: ../../third_party/ffmpeg-dependencies.json'
     'Build instructions: ../../third_party/FFMPEG-SOURCES.md'
 ) -join "`r`n"
 [IO.File]::WriteAllText((Join-Path $portableRoot 'tools\ffmpeg\SOURCE-INFO.txt'), $ffmpegSourceInfo, (New-Object Text.UTF8Encoding($false)))
 $buildInfo = @{
     version = $Version
+    releaseTag = 'v' + $releaseVersion
+    variant = $(if ($LegacySetup) { 'legacy-driver-setup' } else { 'standard' })
     commit = $packageCommit
     architecture = 'win-x64'
     sourceArchive = $sourceName
@@ -89,6 +96,8 @@ $buildInfo = @{
     ffmpeg = $bundleLock.version
     ffmpegSourceKit = $ffmpegSourceName
     ffmpegLockSha256 = (Get-FileHash -LiteralPath (Join-Path $sourceRoot 'tools\ffmpeg-bundle.lock.json') -Algorithm SHA256).Hash.ToLowerInvariant()
+    compatibilitySetup = $(if ($LegacySetup) { 'Install-Legacy-FFmpeg.cmd' } else { $null })
+    compatibilityLockSha256 = (Get-FileHash -LiteralPath (Join-Path $sourceRoot 'tools\ffmpeg-compat.lock.json') -Algorithm SHA256).Hash.ToLowerInvariant()
 } | ConvertTo-Json
 [IO.File]::WriteAllText((Join-Path $portableRoot 'BUILD-INFO.json'), $buildInfo, (New-Object Text.UTF8Encoding($false)))
 foreach ($binary in @('BiliCacheExtractor.exe', 'BiliCacheExtractor.Cli.exe')) {

@@ -16,6 +16,12 @@ The bundled FFmpeg uses **GPL-3.0-or-later**. Its original license is retained i
 
 For source checkouts, the optional setup script downloads a separate FFmpeg `n8.1.3-27-g8dca1586f4` development build under GPL-3.0-or-later. Its download URL and checksum are recorded in `tools/ffmpeg.lock.json`.
 
+## Optional legacy FFmpeg
+
+The `v1.3.1-legacy` package adds `Install-Legacy-FFmpeg.cmd`. It obtains FFmpeg 4.2.2 directly from imageio-ffmpeg 0.4.9 on PyPI and verifies both the wheel and executable against [fixed hashes](tools/ffmpeg-compat.lock.json). The old executable is downloaded separately and is not in our Release assets. It reports **GPL-3.0-or-later**, copyright (c) 2000-2019 the FFmpeg developers and contributors to its included libraries. The full GPLv3 text is in `LICENSE`; [LEGACY-FFMPEG.md](LEGACY-FFMPEG.md) records provenance, source availability and setup. The imageio Python wrapper is not installed.
+
+兼容版通过首次联网配置取得与本地相同的 FFmpeg 4.2.2，之后可离线使用。旧版采用 GPL-3.0-or-later，从上游独立下载，不内置在本项目附件中。哈希、来源及历史源码材料的现状见上述说明。
+
 ## BtbN build recipes
 
 The preserved recipe archive is from `BtbN/FFmpeg-Builds`, tag `autobuild-2026-10-27-18-38`, copyright 2020-2021 BtbN. It is distributed under the MIT license, retained in `third_party/ffmpeg-builds.LICENSE` and in the original recipe archive. Dependency projects retain their own copyright and license files in the source repositories listed in `third_party/ffmpeg-dependencies.json`.

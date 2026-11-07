@@ -33,6 +33,12 @@
 
 離線套件包含編譯好的 GUI、CLI、本機 FFmpeg 建置和對應的應用程式原始碼 ZIP。FFmpeg 授權條款與原始碼資訊保存在 `tools/ffmpeg/LICENSE.txt` 和 `tools/ffmpeg/SOURCE-INFO.txt`。同一 Release 提供 [FFmpeg 原始碼與建置資料](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/FFmpeg-N-128122-source-build-kit.zip)，詳細來源與建置方式請參閱[原始碼說明](third_party/FFMPEG-SOURCES.md)。顯示卡驅動程式不支援所需 NVENC API 時，內建 FFmpeg 可使用 CPU 編碼。
 
+### 舊版 NVIDIA 驅動程式
+
+另提供 [1.3.1 舊驅動相容版](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.3.1-legacy)。下載其 [Windows x64 程式套件](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1-legacy/BiliCacheExtractor-v1.3.1-legacy-win-x64.zip)，解壓縮後先執行 `Install-Legacy-FFmpeg.cmd`，連網下載約 22 MB，再開啟軟體；之後可離線使用。腳本取得的 FFmpeg 4.2.2 與原本機相容檔案完全相同，已在 RTX 4060 Ti、驅動程式 560.94 上驗證 NVIDIA H.264/H.265 編碼，自動模式會實測並選擇可用編碼器。請參閱[設定、來源與授權條款](LEGACY-FFMPEG.md)。
+
+重現此發行變體時，在下方 `package.ps1` 命令中加入 `-LegacySetup`。應用程式版本仍為 1.3.1，`-legacy` 後綴用於標示封裝方式。
+
 ### 從原始碼建置
 
 1. 解壓縮原始碼 ZIP 或複製本儲存庫。

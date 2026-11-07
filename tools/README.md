@@ -6,6 +6,8 @@
 
 The **1.3.1 offline Release** already includes FFmpeg/FFprobe and the required DLLs under `tools/ffmpeg/`. Start the application directly. The bundled build and file hashes are recorded in [ffmpeg-bundle.lock.json](ffmpeg-bundle.lock.json); its [source and build materials](../third_party/FFMPEG-SOURCES.md) are provided with the Release.
 
+The separate `v1.3.1-legacy` package also includes `Install-Legacy-FFmpeg.cmd`. Run it once to download the FFmpeg 4.2.2 fallback encoder (22 MB); later use is offline. The pinned executable matches the local compatibility tool and is installed alongside the main FFmpeg. See [legacy setup and provenance](../LEGACY-FFMPEG.md).
+
 For a source checkout, the optional `Install-FFmpeg.cmd` downloads the separate development build pinned in [ffmpeg.lock.json](ffmpeg.lock.json). It checks the archive size and SHA-256 before extraction and preserves the complete upstream distribution and license. Its first download needs an internet connection (about 86 MiB).
 
 ```text
@@ -51,6 +53,8 @@ The source repository excludes FFmpeg binaries. The offline Release bundles buil
 ## 简体中文
 
 **1.3.1 离线程序包**已在 `tools/ffmpeg/` 中内置 FFmpeg、FFprobe 和配套 DLL，解压后直接运行程序。内置版本和文件哈希见 `ffmpeg-bundle.lock.json`，对应的主源码、依赖源码来源及构建资料见[源码说明](../third_party/FFMPEG-SOURCES.md)。
+
+单独的 `v1.3.1-legacy` 兼容包还提供 `Install-Legacy-FFmpeg.cmd`。首次运行时下载约 22 MB，安装与本地相同的 FFmpeg 4.2.2 兼容编码器；以后可离线使用，主 FFmpeg 保留。详见[兼容配置与来源说明](../LEGACY-FFMPEG.md)。
 
 从源码检出时，可选用 `Install-FFmpeg.cmd` 下载 `ffmpeg.lock.json` 指定的另一套开发用构建。脚本核对大小与 SHA-256 后安装，保留原始发行目录、GPL-3.0-or-later 许可证与来源记录。首次下载约 86 MiB，重复运行会核对已有安装。
 

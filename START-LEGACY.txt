@@ -1,0 +1,34 @@
+BiliCacheExtractor 1.3.1-legacy - Windows x64
+
+简体中文
+1. 将整个程序包解压到可写目录。
+2. 首次运行 Install-Legacy-FFmpeg.cmd，联网下载约 22 MB 并自动配置旧驱动兼容编码器。
+3. 打开 BiliCacheExtractor.exe。转码时选择 H.264 或 H.265，设备选择“自动”或“NVIDIA”。
+配置完成后可以离线使用。无损提取不需要视频编码器。
+本包保留主 FFmpeg、FFprobe 和配套 DLL；额外的 FFmpeg 4.2.2 在首次配置时单独下载。
+应用采用 GPL-3.0-only；两套 FFmpeg 均采用 GPL-3.0-or-later。正文见 LICENSE。
+详细说明见 README.zh-CN.md；兼容编码器来源与配置说明见 LEGACY-FFMPEG.md。
+对应应用源码 ZIP 已包含在程序包内。
+
+繁體中文
+1. 將整個程式套件解壓縮至可寫入的目錄。
+2. 首次執行 Install-Legacy-FFmpeg.cmd，連網下載約 22 MB 並自動設定舊驅動相容編碼器。
+3. 開啟 BiliCacheExtractor.exe。轉碼時選擇 H.264 或 H.265，裝置選擇「自動」或「NVIDIA」。
+設定完成後可離線使用。無損提取不需要視訊編碼器。
+本套件保留主 FFmpeg、FFprobe 和所需 DLL；額外的 FFmpeg 4.2.2 在首次設定時獨立下載。
+應用程式採用 GPL-3.0-only；兩套 FFmpeg 均採用 GPL-3.0-or-later。正文請參閱 LICENSE。
+詳細說明請參閱 README.zh-TW.md；相容編碼器來源與設定說明請參閱 LEGACY-FFMPEG.md。
+對應應用程式原始碼 ZIP 已包含在套件內。
+
+English
+1. Extract the entire package to a writable folder.
+2. Run Install-Legacy-FFmpeg.cmd once with internet access (22 MB).
+3. Start BiliCacheExtractor.exe. For transcoding, select H.264 or H.265 and Auto or NVIDIA.
+After setup, use is offline. Lossless extraction does not require a video encoder.
+The main FFmpeg, FFprobe and DLLs are included. FFmpeg 4.2.2 is downloaded separately during setup.
+Application license: GPL-3.0-only. Both FFmpeg builds: GPL-3.0-or-later. See LICENSE.
+See README.md and LEGACY-FFMPEG.md for usage, source access and provenance.
+The corresponding application source ZIP is included.
+
+Tested: Windows 11 x64, .NET Framework 4.8.1, RTX 4060 Ti, NVIDIA driver 560.94.
+Release: https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.3.1-legacy
