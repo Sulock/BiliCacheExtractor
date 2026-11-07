@@ -1,0 +1,62 @@
+{
+  "version": "N-128122-g215351c1c3-20261027",
+  "license": "GPL-3.0-or-later",
+  "sourceCommit": "215351c1c37dc0345a6794f4c96af54cf30e1c7b",
+  "sourceUrl": "https://github.com/FFmpeg/FFmpeg/tree/215351c1c37dc0345a6794f4c96af54cf30e1c7b",
+  "sourceArchiveUrl": "https://codeload.github.com/FFmpeg/FFmpeg/tar.gz/215351c1c37dc0345a6794f4c96af54cf30e1c7b",
+  "buildRecipes": "third_party/ffmpeg-builds-20261027.zip",
+  "buildRecipesSha256": "6a55baff89a2bf30e8bec950ea7f7e9efe23183f1996cc603852cced8cdedecc",
+  "runtimeFiles": [
+    {
+      "path": "bin/avcodec-63.dll",
+      "bytes": 120589312,
+      "sha256": "9bb7542ced39b7dc5d6be855fa58cb3ffb577bb566d6314e2107b3ad27d07761"
+    },
+    {
+      "path": "bin/avdevice-63.dll",
+      "bytes": 5008384,
+      "sha256": "eb5d95af0c05441d82cc7174811cf283df6eabf1c928f5b679d0e2fe5e4edcde"
+    },
+    {
+      "path": "bin/avfilter-12.dll",
+      "bytes": 37846016,
+      "sha256": "5ff1aff0bc436291853dd9ab3a0df128c8d1bc7c2b2b6dc763a894f549e6a1a8"
+    },
+    {
+      "path": "bin/avformat-63.dll",
+      "bytes": 26224640,
+      "sha256": "e9a38e0b3a8fa0610ca71ff7abd9a64bb2a9238206fb834eff77901beb382b55"
+    },
+    {
+      "path": "bin/avutil-61.dll",
+      "bytes": 3050496,
+      "sha256": "ca4bec9b9785b43b47d29de7899d0be4fdf98f7fdc8b2f5502bf3b6a1359b470"
+    },
+    {
+      "path": "bin/ffmpeg.exe",
+      "bytes": 573440,
+      "sha256": "5985a5ea7edc4c0973be868a1932633a8241f87664c3e1dab31a11493ca0e2de"
+    },
+    {
+      "path": "bin/ffprobe.exe",
+      "bytes": 276480,
+      "sha256": "c4ad1b419312a504dc4ac9c7112151019bceabaff94b9319710e7b9ecfd672f0"
+    },
+    {
+      "path": "bin/swresample-7.dll",
+      "bytes": 751616,
+      "sha256": "79c93a87feb95bed96403c84d4b12c84efc1839e0b038b3a0a847934578855fe"
+    },
+    {
+      "path": "bin/swscale-10.dll",
+      "bytes": 2409472,
+      "sha256": "6bf66ca78123be44ca0f970636248e23e2680d9ed759b8698e5bbfaae9b05ef7"
+    },
+    {
+      "path": "LICENSE.txt",
+      "bytes": 35147,
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    }
+  ],
+  "sourceArchiveSha256": "d151b5d5c81c029619b342b584a51b2fbf19679f307c63632839e2da4c7bf3ec"
+}

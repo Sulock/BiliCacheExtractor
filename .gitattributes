@@ -8,3 +8,5 @@
 *.manifest text
 *.png binary
 *.ico binary
+third_party/** linguist-vendored
+*.sh text eol=lf

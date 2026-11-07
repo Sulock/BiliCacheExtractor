@@ -4,7 +4,9 @@
 
 ## English
 
-Run `Install-FFmpeg.cmd` in the application/source folder to download and install the version pinned in [ffmpeg.lock.json](ffmpeg.lock.json). The setup checks the archive size and SHA-256 before extraction and keeps the complete upstream distribution, including its license. It needs an internet connection for the first download (about 86 MiB).
+The **1.3.1 offline Release** already includes FFmpeg/FFprobe and the required DLLs under `tools/ffmpeg/`. Start the application directly. The bundled build and file hashes are recorded in [ffmpeg-bundle.lock.json](ffmpeg-bundle.lock.json); its [source and build materials](../third_party/FFMPEG-SOURCES.md) are provided with the Release.
+
+For a source checkout, the optional `Install-FFmpeg.cmd` downloads the separate development build pinned in [ffmpeg.lock.json](ffmpeg.lock.json). It checks the archive size and SHA-256 before extraction and preserves the complete upstream distribution and license. Its first download needs an internet connection (about 86 MiB).
 
 ```text
 BiliCacheExtractor.exe
@@ -44,11 +46,13 @@ Inspect your installed build with:
 .\tools\ffmpeg\bin\ffprobe.exe -version
 ```
 
-The source repository and application package exclude FFmpeg binaries; setup retrieves them from the upstream provider. The pinned build uses **GPL-3.0-or-later**. Its `LICENSE.txt` is preserved and `SOURCE-INFO.txt` records the version and source links. Redistribution of a bundled build needs the licenses, notices and corresponding source applicable to that exact build and its libraries. See [third-party notices](../THIRD_PARTY_NOTICES.md).
+The source repository excludes FFmpeg binaries. The offline Release bundles build **N-128122-g215351c1c3-20261027**, under **GPL-3.0-or-later**. Its original `LICENSE.txt` is preserved and `SOURCE-INFO.txt` points to the source/build kit and fixed dependency source locations. See [third-party notices](../THIRD_PARTY_NOTICES.md).
 
 ## 简体中文
 
-在程序或源码目录运行 `Install-FFmpeg.cmd`，脚本会联网下载 `ffmpeg.lock.json` 指定的固定版本，核对大小与 SHA-256 后安装到 `tools/ffmpeg/`，保留完整上游发行目录及 GPL-3.0-or-later 许可证。首次下载约 86 MiB，重复运行会核对已有安装。`SOURCE-INFO.txt` 记录版本、下载来源、FFmpeg 源码与构建脚本链接。
+**1.3.1 离线程序包**已在 `tools/ffmpeg/` 中内置 FFmpeg、FFprobe 和配套 DLL，解压后直接运行程序。内置版本和文件哈希见 `ffmpeg-bundle.lock.json`，对应的主源码、依赖源码来源及构建资料见[源码说明](../third_party/FFMPEG-SOURCES.md)。
+
+从源码检出时，可选用 `Install-FFmpeg.cmd` 下载 `ffmpeg.lock.json` 指定的另一套开发用构建。脚本核对大小与 SHA-256 后安装，保留原始发行目录、GPL-3.0-or-later 许可证与来源记录。首次下载约 86 MiB，重复运行会核对已有安装。
 
 离线安装时，先下载 `ffmpeg.lock.json` 中指定的 ZIP，再运行 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-FFmpeg.ps1 -ArchivePath 'C:\Downloads\ffmpeg.zip'`，脚本仍会校验下载。已有手动配置可直接使用；需要换用自动配置时，先将旧工具移至备份目录。
 
@@ -58,4 +62,4 @@ CPU 转码需要 `libx264`、`libx265`，硬件转码需要对应的 NVENC、QSV
 
 查找顺序是 `tools/`、`tools/ffmpeg/bin/`、旧目录 `ffmpeg-master-latest-win64-gpl-shared/bin/`、程序根目录，不读取系统 PATH。可选的 `tools/ffmpeg-compat.exe` 用于尝试兼容编码器；需要时单独取得并记录其来源。新版 FFmpeg 可能要求更高版本的显卡驱动；硬件编码不可用时，自动模式可使用 CPU 编码。
 
-仓库和本项目程序包均不包含 FFmpeg 二进制，由自动配置脚本从上游单独取得。若以后分发内置 FFmpeg 的程序包，应为准确的构建版本及所含库准备对应的许可证、声明和源码材料。
+源码仓库不存储 FFmpeg 二进制。离线 Release 内置 `N-128122-g215351c1c3-20261027` 构建，保留其 GPL-3.0-or-later 许可证，并提供主源码、构建配方、补丁及依赖源码的固定来源清单。

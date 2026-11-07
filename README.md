@@ -22,17 +22,16 @@ Interface rendered with synthetic UI test data.
 
 ## Get started
 
-Download **1.3.0** from [Releases](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.3.0): [Windows x64 package](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.0/BiliCacheExtractor-v1.3.0-win-x64.zip) · [Source ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.0/BiliCacheExtractor-v1.3.0-source.zip) · [SHA-256 checksums](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.0/SHA256SUMS.txt).
+Download **1.3.1** from [Releases](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.3.1): [Windows x64 package](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/BiliCacheExtractor-v1.3.1-win-x64.zip) · [Source ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/BiliCacheExtractor-v1.3.1-source.zip) · [SHA-256 checksums](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/SHA256SUMS.txt).
 
 Tested on **Windows 11 23H2 x64 with .NET Framework 4.8.1**. The build targets x64 and uses Windows APIs for the interface, hardware information and Recycle Bin. Python is only needed if you choose to regenerate the icon.
 
 ### Download and run
 
 1. Extract the Windows x64 package to a writable folder.
-2. Run `Install-FFmpeg.cmd` once with an internet connection. It downloads about 86 MiB from BtbN/FFmpeg-Builds, verifies the pinned SHA-256 and installs FFmpeg/FFprobe under `tools/ffmpeg/`.
-3. Start `BiliCacheExtractor.exe`.
+2. Start `BiliCacheExtractor.exe`. FFmpeg, FFprobe and their required DLLs are already included.
 
-The package contains the compiled GUI/CLI and the matching application source ZIP. FFmpeg is downloaded separately; its license and origin are retained as `tools/ffmpeg/LICENSE.txt` and `tools/ffmpeg/SOURCE-INFO.txt`. If you already supplied compatible media tools manually, skip setup. See [media tool setup](tools/README.md) for offline installation and manual configuration.
+The offline package contains the compiled GUI/CLI, the local FFmpeg build and the matching application source ZIP. FFmpeg's license and source information are retained as `tools/ffmpeg/LICENSE.txt` and `tools/ffmpeg/SOURCE-INFO.txt`. The same Release provides [FFmpeg source and build materials](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/FFmpeg-N-128122-source-build-kit.zip); see [source locations and build instructions](third_party/FFMPEG-SOURCES.md). The included FFmpeg can use CPU encoding when a GPU driver does not support its NVENC API.
 
 ### Build from source
 
@@ -109,7 +108,7 @@ Source layout:
 - `Install-FFmpeg.ps1` and `tools/ffmpeg.lock.json`: install the pinned media-tool distribution after verifying its checksum.
 - `package.ps1`: builds release packages from a committed revision, including the corresponding source ZIP and SHA-256 checksums.
 
-To reproduce a release package from a committed revision, run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\package.ps1 -Version 1.3.0 -Commit HEAD`. Output goes to `release-v1.3.0/`; existing artifacts are preserved, so choose a fresh `-OutputDirectory` for another build.
+To reproduce the offline package, run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\package.ps1 -Version 1.3.1 -Commit HEAD -FFmpegDirectory 'C:\path\to\ffmpeg' -FFmpegSourceArchive 'C:\path\to\FFmpeg-215351c1c3-source.tar.gz'`. Use the bundled FFmpeg files and the source archive from the FFmpeg source/build kit; the script verifies their pinned hashes. Output goes to `release-v1.3.1/`; choose a fresh `-OutputDirectory` for another build.
 
 ## Feedback
 

@@ -8,13 +8,17 @@
 - Upstream source: [FFmpeg source code](https://ffmpeg.org/download.html#get-sources).
 - License information: [FFmpeg legal page](https://ffmpeg.org/legal.html).
 
-BiliCacheExtractor invokes FFmpeg and FFprobe as separate processes. Neither this source repository nor the 1.3.0 application package includes FFmpeg executables or DLLs. `Install-FFmpeg.cmd` downloads the pinned upstream distribution separately as described in [tools/README.md](tools/README.md).
+BiliCacheExtractor invokes FFmpeg and FFprobe as separate processes. The **1.3.1 offline application package** bundles the local FFmpeg build `N-128122-g215351c1c3-20261027`, FFprobe and the required DLLs. The source repository records their hashes in `tools/ffmpeg-bundle.lock.json` and excludes the binary files themselves.
 
 The license of an FFmpeg binary depends on its build configuration and included libraries. Inspect `ffmpeg -L` and `ffmpeg -version`, and retain the distributor's notices. Builds using `--enable-gpl --enable-version3`, including those used for the current local verification, report GPL version 3 or later. BiliCacheExtractor's own license is **GPL-3.0-only**.
 
-The setup script uses **FFmpeg n8.1.3-27-g8dca1586f4**, BtbN's `autobuild-2026-10-31-12-59` Windows x64 GPL shared build, licensed under **GPL-3.0-or-later**. Its download URL and SHA-256 are recorded in [tools/ffmpeg.lock.json](tools/ffmpeg.lock.json). The original distribution is preserved under `tools/ffmpeg/`, including `LICENSE.txt`; `SOURCE-INFO.txt` records the version, origin, FFmpeg source and build-script links.
+The bundled FFmpeg uses **GPL-3.0-or-later**. Its original license is retained in `tools/ffmpeg/LICENSE.txt`. The Release provides **FFmpeg-N-128122-source-build-kit.zip**, containing the precise FFmpeg main source archive, the dated BtbN build recipes/patches, and the fixed dependency source locations. See [FFmpeg source access and build instructions](third_party/FFMPEG-SOURCES.md).
 
-If a future release redistributes FFmpeg binaries, it must also provide the notices and corresponding source required by that exact build's licenses, including applicable library and build materials. The application source ZIP contains BiliCacheExtractor's corresponding source; FFmpeg source is provided separately by its upstream projects.
+For source checkouts, the optional setup script downloads a separate FFmpeg `n8.1.3-27-g8dca1586f4` development build under GPL-3.0-or-later. Its download URL and checksum are recorded in `tools/ffmpeg.lock.json`.
+
+## BtbN build recipes
+
+The preserved recipe archive is from `BtbN/FFmpeg-Builds`, tag `autobuild-2026-10-27-18-38`, copyright 2020-2021 BtbN. It is distributed under the MIT license, retained in `third_party/ffmpeg-builds.LICENSE` and in the original recipe archive. Dependency projects retain their own copyright and license files in the source repositories listed in `third_party/ffmpeg-dependencies.json`.
 
 ## Microsoft .NET Framework and Windows
 
@@ -26,8 +30,8 @@ The application uses the installed .NET Framework and Windows system APIs. This 
 
 ## 简体中文
 
-FFmpeg/FFprobe 由程序通过独立进程调用。源码仓库及 1.3.0 程序包不包含其 EXE 或 DLL，自动配置脚本会从上游单独下载固定构建，并保留完整发行目录、许可证和来源记录。其具体许可取决于编译选项和所含第三方库，可通过 `-L`、`-version` 及发行方说明核对。
+FFmpeg/FFprobe 由程序通过独立进程调用。1.3.1 离线包内置本地主构建 `N-128122-g215351c1c3-20261027` 的程序及 DLL，并保留其原始 GPL-3.0-or-later 许可文件。源码仓库仅记录版本、哈希和源码信息，不存储这些二进制。
 
-安装脚本选定 FFmpeg `n8.1.3-27-g8dca1586f4`，来自 BtbN 的 `autobuild-2026-10-31-12-59` Windows x64 GPL 共享构建，采用 `GPL-3.0-or-later`；本项目自身采用 `GPL-3.0-only`。下载地址和 SHA-256 见 `tools/ffmpeg.lock.json`，安装后的许可和来源文件位于 `tools/ffmpeg/`。若以后直接分发 FFmpeg 二进制，还需为该构建提供对应的许可、声明、源码及构建材料。
+同一 Release 提供 FFmpeg 主源码、对应日期的构建配方与补丁，以及依赖源码仓库和固定修订号清单。BtbN 构建配方采用 MIT 许可，原文与版权声明已保留。应用自身采用 `GPL-3.0-only`；可选的源码开发配置脚本使用另一套单独下载的 FFmpeg 构建，信息见 `tools/ffmpeg.lock.json`。
 
 .NET Framework、Windows 系统组件，以及可选图标生成器使用的 Pillow、NumPy 均不由本仓库分发。

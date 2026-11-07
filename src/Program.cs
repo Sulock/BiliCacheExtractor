@@ -9,8 +9,8 @@ using System.Reflection;
 
 [assembly: AssemblyTitle("Bilibili 缓存提取器")]
 [assembly: AssemblyDescription("无损提取、CPU 与显卡转码")]
-[assembly: AssemblyVersion("1.3.0.0")]
-[assembly: AssemblyFileVersion("1.3.0.0")]
+[assembly: AssemblyVersion("1.3.1.0")]
+[assembly: AssemblyFileVersion("1.3.1.0")]
 [assembly: AssemblyCopyright("Copyright (C) 2026 Sulock")]
 
 namespace BiliExtractor

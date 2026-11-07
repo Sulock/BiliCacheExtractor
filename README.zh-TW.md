@@ -22,17 +22,16 @@
 
 ## 開始使用
 
-**1.3.0** 下載入口：[Release 頁面](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.3.0) · [Windows x64 程式套件](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.0/BiliCacheExtractor-v1.3.0-win-x64.zip) · [原始碼 ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.0/BiliCacheExtractor-v1.3.0-source.zip) · [SHA-256 驗證檔案](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.0/SHA256SUMS.txt)。
+**1.3.1** 下載入口：[Release 頁面](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.3.1) · [Windows x64 程式套件](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/BiliCacheExtractor-v1.3.1-win-x64.zip) · [原始碼 ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/BiliCacheExtractor-v1.3.1-source.zip) · [SHA-256 驗證檔案](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/SHA256SUMS.txt)。
 
 已驗證環境為 **Windows 11 23H2 x64、.NET Framework 4.8.1**。程式編譯為 x64，介面、硬體偵測和資源回收筒功能使用 Windows API。只有重新產生圖示時需要 Python。
 
 ### 下載執行
 
 1. 將 Windows x64 程式套件解壓縮至可寫入的目錄。
-2. 首次使用時執行 `Install-FFmpeg.cmd`，連線從 BtbN/FFmpeg-Builds 下載約 86 MiB 的固定建置，核對 SHA-256 後將 FFmpeg/FFprobe 安裝至 `tools/ffmpeg/`。
-3. 按兩下 `BiliCacheExtractor.exe`。
+2. 按兩下 `BiliCacheExtractor.exe`。套件已包含 FFmpeg、FFprobe 及所需 DLL。
 
-套件包含編譯好的 GUI、CLI 和對應的應用程式原始碼 ZIP。FFmpeg 另行下載，其授權條款與來源記錄保存在 `tools/ffmpeg/LICENSE.txt` 和 `tools/ffmpeg/SOURCE-INFO.txt`。已手動設定相容媒體工具的使用者可以跳過安裝。離線安裝與手動設定請參閱[媒體工具說明](tools/README.md)。
+離線套件包含編譯好的 GUI、CLI、本機 FFmpeg 建置和對應的應用程式原始碼 ZIP。FFmpeg 授權條款與原始碼資訊保存在 `tools/ffmpeg/LICENSE.txt` 和 `tools/ffmpeg/SOURCE-INFO.txt`。同一 Release 提供 [FFmpeg 原始碼與建置資料](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/FFmpeg-N-128122-source-build-kit.zip)，詳細來源與建置方式請參閱[原始碼說明](third_party/FFMPEG-SOURCES.md)。顯示卡驅動程式不支援所需 NVENC API 時，內建 FFmpeg 可使用 CPU 編碼。
 
 ### 從原始碼建置
 
@@ -109,7 +108,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\run.ps1
 - `Install-FFmpeg.ps1` 與 `tools/ffmpeg.lock.json`：驗證下載後安裝固定版本的媒體工具。
 - `package.ps1`：從已提交的原始碼建置發布套件，附上對應原始碼 ZIP 和 SHA-256 驗證檔案。
 
-重現發布套件可執行 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\package.ps1 -Version 1.3.0 -Commit HEAD`，輸出位於 `release-v1.3.0/`。腳本會保留既有產物；再次建置時請用 `-OutputDirectory` 指定新的輸出目錄。
+重現離線套件可執行 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\package.ps1 -Version 1.3.1 -Commit HEAD -FFmpegDirectory 'C:\path\to\ffmpeg' -FFmpegSourceArchive 'C:\path\to\FFmpeg-215351c1c3-source.tar.gz'`。請使用離線套件中的 FFmpeg 檔案，以及原始碼資料套件中的主原始碼歸檔，腳本會核對固定雜湊。輸出位於 `release-v1.3.1/`；再次建置時請用 `-OutputDirectory` 指定新的輸出目錄。
 
 ## 回報問題
 

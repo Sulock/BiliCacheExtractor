@@ -22,17 +22,16 @@
 
 ## 开始使用
 
-**1.3.0** 下载入口：[Release 页面](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.3.0) · [Windows x64 程序包](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.0/BiliCacheExtractor-v1.3.0-win-x64.zip) · [源码 ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.0/BiliCacheExtractor-v1.3.0-source.zip) · [SHA-256 校验文件](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.0/SHA256SUMS.txt)。
+**1.3.1** 下载入口：[Release 页面](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.3.1) · [Windows x64 程序包](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/BiliCacheExtractor-v1.3.1-win-x64.zip) · [源码 ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/BiliCacheExtractor-v1.3.1-source.zip) · [SHA-256 校验文件](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/SHA256SUMS.txt)。
 
 已验证环境为 **Windows 11 23H2 x64、.NET Framework 4.8.1**。程序编译为 x64，界面、硬件检测和回收站功能使用 Windows API。只有重新生成图标时需要 Python。
 
 ### 下载运行
 
 1. 将 Windows x64 程序包解压到可写目录。
-2. 首次使用时运行 `Install-FFmpeg.cmd`，联网从 BtbN/FFmpeg-Builds 下载约 86 MiB 的固定构建，核对 SHA-256 后将 FFmpeg/FFprobe 安装到 `tools/ffmpeg/`。
-3. 双击 `BiliCacheExtractor.exe`。
+2. 双击 `BiliCacheExtractor.exe`。程序包已包含 FFmpeg、FFprobe 及配套 DLL。
 
-程序包包含编译好的 GUI、CLI 和对应的应用源码 ZIP。FFmpeg 单独下载，其许可证与来源记录保存在 `tools/ffmpeg/LICENSE.txt` 和 `tools/ffmpeg/SOURCE-INFO.txt`。已经手动配置兼容媒体工具的用户可以跳过安装。离线安装与手动配置见[媒体工具说明](tools/README.md)。
+离线程序包包含编译好的 GUI、CLI、本地 FFmpeg 构建和对应的应用源码 ZIP。FFmpeg 的许可证与源码信息保存在 `tools/ffmpeg/LICENSE.txt` 和 `tools/ffmpeg/SOURCE-INFO.txt`。同一 Release 提供 [FFmpeg 源码与构建资料](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/FFmpeg-N-128122-source-build-kit.zip)，详细来源与构建方式见[源码说明](third_party/FFMPEG-SOURCES.md)。显卡驱动不支持所需 NVENC API 时，内置 FFmpeg 可使用 CPU 编码。
 
 ### 从源码构建
 
@@ -109,7 +108,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\run.ps1
 - `Install-FFmpeg.ps1` 与 `tools/ffmpeg.lock.json`：校验下载后安装固定版本的媒体工具。
 - `package.ps1`：从已提交的源码构建发布包，附上对应源码 ZIP 和 SHA-256 校验文件。
 
-复现发布包可运行 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\package.ps1 -Version 1.3.0 -Commit HEAD`，输出位于 `release-v1.3.0/`。脚本保留已有产物；再次构建时用 `-OutputDirectory` 指定新的输出目录。
+复现离线包可运行 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\package.ps1 -Version 1.3.1 -Commit HEAD -FFmpegDirectory 'C:\path\to\ffmpeg' -FFmpegSourceArchive 'C:\path\to\FFmpeg-215351c1c3-source.tar.gz'`。使用离线包中的 FFmpeg 文件及源码资料包中的主源码归档，脚本会核对固定哈希。输出位于 `release-v1.3.1/`；再次构建时用 `-OutputDirectory` 指定新的输出目录。
 
 ## 反馈问题
 

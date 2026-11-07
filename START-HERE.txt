@@ -1,28 +1,25 @@
-BiliCacheExtractor 1.3.0 - Windows x64
+BiliCacheExtractor 1.3.1 - Windows x64
 
 简体中文
 1. 将整个程序包解压到可写目录。
-2. 首次使用时双击 Install-FFmpeg.cmd，联网下载并校验固定版本的 FFmpeg。
-3. 完成后双击 BiliCacheExtractor.exe，选择缓存目录并扫描、提取。
-已手动配置兼容 FFmpeg/FFprobe 的用户可以跳过第 2 步。
+2. 双击 BiliCacheExtractor.exe，选择缓存目录并扫描、提取。
+程序包已内置 FFmpeg、FFprobe 和配套 DLL，可直接离线运行。
 FFmpeg 的许可证和来源记录保存在 tools\ffmpeg\LICENSE.txt 与 SOURCE-INFO.txt。
 本软件许可证为 GPL-3.0-only，正文见 LICENSE；对应源码 ZIP 已包含在本程序包中。
 详细用法见 README.zh-CN.md。
 
 繁體中文
 1. 將整個程式套件解壓縮至可寫入的目錄。
-2. 首次使用時按兩下 Install-FFmpeg.cmd，連線下載並驗證固定版本的 FFmpeg。
-3. 完成後按兩下 BiliCacheExtractor.exe，選擇緩存目錄並掃描、提取。
-已手動設定相容 FFmpeg/FFprobe 的使用者可以跳過第 2 步。
+2. 按兩下 BiliCacheExtractor.exe，選擇緩存目錄並掃描、提取。
+套件已內建 FFmpeg、FFprobe 和所需 DLL，可直接離線執行。
 FFmpeg 授權條款與來源記錄位於 tools\ffmpeg\LICENSE.txt 與 SOURCE-INFO.txt。
 本軟體採用 GPL-3.0-only，正文請參閱 LICENSE；對應原始碼 ZIP 已包含在套件中。
 詳細用法請參閱 README.zh-TW.md。
 
 English
 1. Extract the entire package to a writable folder.
-2. Run Install-FFmpeg.cmd once with an internet connection to download and verify the pinned FFmpeg build.
-3. Start BiliCacheExtractor.exe, select your cache folder, then scan and extract.
-Skip step 2 if you already supplied compatible FFmpeg and FFprobe manually.
+2. Start BiliCacheExtractor.exe, select your cache folder, then scan and extract.
+FFmpeg, FFprobe and their required DLLs are included for offline use.
 The FFmpeg license and origin are retained in tools\ffmpeg\LICENSE.txt and SOURCE-INFO.txt.
 BiliCacheExtractor is GPL-3.0-only; see LICENSE. Its corresponding source ZIP is included in this package.
 See README.md for detailed instructions.
