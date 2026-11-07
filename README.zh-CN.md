@@ -1,4 +1,4 @@
-# Bilibili 缓存提取器
+﻿# Bilibili 缓存提取器
 
 [English](README.md) | **简体中文** | [繁體中文](README.zh-TW.md)
 
@@ -22,7 +22,7 @@
 
 ## 开始使用
 
-**1.4.0** 下载入口：[Release 页面](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.4.0) · [Windows x64 程序包](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.0/BiliCacheExtractor-v1.4.0-win-x64.zip) · [源码 ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.0/BiliCacheExtractor-v1.4.0-source.zip) · [SHA-256 校验文件](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.0/SHA256SUMS.txt)。
+**1.4.1** 下载入口：[Release 页面](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.4.1) · [Windows x64 程序包](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.1/BiliCacheExtractor-v1.4.1-win-x64.zip) · [源码 ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.1/BiliCacheExtractor-v1.4.1-source.zip) · [SHA-256 校验文件](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.1/SHA256SUMS.txt)。
 
 已验证环境为 **Windows 11 23H2 x64、.NET Framework 4.8.1**。程序编译为 x64，界面、硬件检测和回收站功能使用 Windows API。只有重新生成图标时需要 Python。
 
@@ -100,7 +100,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\run.ps1
 
 重新编译前请关闭图形界面。测试默认生成合成音视频与缓存，不需要个人视频。可用 `-CachePath 'C:\path\to\cache'` 指定含可提取视频的真实缓存，用于取消测试。添加 `-Recycle` 会额外对 `verification/` 中由测试创建的文件执行真实回收与恢复。
 
-1.4.0 共通过 110 项检查：18 项工具管理、39 项媒体、46 项界面和 7 项回收站计划检查。测试覆盖合成缓存、CPU 与可用显卡转码、输出解码、压缩数据哈希、取消清理、三语界面、工具选择和安装校验。没有对应硬件时，Intel/AMD 选择逻辑用模拟工具验证；真实回收与恢复仍需显式添加 -Recycle。
+1.4.1 共通过 113 项检查：21 项工具管理、39 项媒体、46 项界面和 7 项回收站计划检查。测试覆盖合成缓存、CPU 与可用显卡转码、输出解码、压缩数据哈希、取消清理、三语界面、工具选择和安装校验。没有对应硬件时，Intel/AMD 选择逻辑用模拟工具验证；真实回收与恢复仍需显式添加 -Recycle。
 
 源码结构：
 
@@ -112,7 +112,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\run.ps1
 - `Install-FFmpeg.ps1` 与 `tools/ffmpeg-recommended.json`：校验下载后安装固定版本的媒体工具。
 - `package.ps1`：从已提交的源码构建发布包，附上对应源码 ZIP 和 SHA-256 校验文件。
 
-复现离线包可运行 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\package.ps1 -Version 1.4.0 -Commit HEAD -FFmpegArchive 'C:\path\to\FFmpeg-8.1.3-bce-nv12.2-win-x64.zip' -FFmpegSourceKit 'C:\path\to\FFmpeg-8.1.3-bce-nv12.2-source-kit.zip'`。使用同一 Release 的 FFmpeg 运行时 ZIP 与完整源码资料 ZIP，脚本会核对固定哈希。输出位于 `release-v1.4.0/`；再次构建时用 `-OutputDirectory` 指定新的输出目录。
+复现离线包可运行 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\package.ps1 -Version 1.4.1 -Commit HEAD -FFmpegArchive 'C:\path\to\FFmpeg-8.1.3-bce-nv12.2-win-x64.zip' -FFmpegSourceKit 'C:\path\to\FFmpeg-8.1.3-bce-nv12.2-source-kit.zip'`。使用同一 Release 的 FFmpeg 运行时 ZIP 与完整源码资料 ZIP，脚本会核对固定哈希。输出位于 `release-v1.4.1/`；再次构建时用 `-OutputDirectory` 指定新的输出目录。
 
 ## 反馈问题
 

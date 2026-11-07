@@ -1,5 +1,5 @@
 ﻿# SPDX-License-Identifier: GPL-3.0-only
-param([string]$Version='1.4.0', [string]$Commit='HEAD', [string]$OutputDirectory,
+param([string]$Version='1.4.1', [string]$Commit='HEAD', [string]$OutputDirectory,
     [Parameter(Mandatory=$true)][string]$FFmpegArchive,
     [Parameter(Mandatory=$true)][string]$FFmpegSourceKit)
 $ErrorActionPreference='Stop'

@@ -47,6 +47,9 @@ static class MediaToolsTests
         try {
             string project = Path.GetFullPath(args[0]), root = Path.Combine(project, "verification", "media-tools-" + Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(root);
+            Check(VerifiedDownload.ValidRange("bytes 20-29/100",20,10,100), "resumed downloads accept the exact requested byte range");
+            Check(!VerifiedDownload.ValidRange("bytes 0-9/100",20,10,100) && !VerifiedDownload.ValidRange("bytes 20-29/101",20,10,100), "resumed downloads reject wrong offsets and changed file sizes");
+            Check(!VerifiedDownload.ValidRange("bytes 20-29/*",20,10,100) && !VerifiedDownload.ValidRange("bytes 0-99999999999999999999999/100",0,10,100), "invalid or overflowing range headers are rejected");
             string bundled = Path.Combine(root, "tools", "ffmpeg", "bin"), local = Path.Combine(root, "用户工具 有空格", "bin");
             Pair(bundled); Pair(local);
             var builtin = MediaTools.BuiltIn(root);

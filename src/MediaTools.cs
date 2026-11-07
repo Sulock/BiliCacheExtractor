@@ -229,37 +229,7 @@ namespace BiliExtractor
             try
             {
                 string archive = Path.Combine(scratch, "download.zip");
-                ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
-                var request = (HttpWebRequest)WebRequest.Create(spec.url);
-                request.UserAgent = "BiliCacheExtractor";
-                request.Timeout = request.ReadWriteTimeout = 30000;
-                using (var timeout = CancellationTokenSource.CreateLinkedTokenSource(token))
-                {
-                    timeout.CancelAfter(TimeSpan.FromMinutes(10));
-                    using (timeout.Token.Register(request.Abort))
-                    {
-                        try
-                        {
-                            using (var response = (HttpWebResponse)await request.GetResponseAsync().ConfigureAwait(false))
-                            using (var input = response.GetResponseStream())
-                            using (var output = File.Create(archive))
-                            {
-                                if (response.ResponseUri.Scheme != "https") throw new InvalidDataException("下载地址必须使用 HTTPS。");
-                                if (response.ContentLength >= 0 && response.ContentLength != spec.bytes) throw new InvalidDataException("下载大小与固定版本不符。");
-                                long total = 0; var buffer = new byte[65536]; int count;
-                                while ((count = await input.ReadAsync(buffer, 0, buffer.Length, timeout.Token).ConfigureAwait(false)) != 0)
-                                {
-                                    total += count;
-                                    if (total > spec.bytes) throw new InvalidDataException("下载大小与固定版本不符。");
-                                    await output.WriteAsync(buffer, 0, count, timeout.Token).ConfigureAwait(false);
-                                    progress(total, spec.bytes);
-                                }
-                            }
-                        }
-                        catch (WebException) { if (timeout.IsCancellationRequested) { token.ThrowIfCancellationRequested(); throw new TimeoutException("下载超时，请重试或选择本地版本。"); } throw; }
-                        catch (OperationCanceledException) { token.ThrowIfCancellationRequested(); throw new TimeoutException("下载超时，请重试或选择本地版本。"); }
-                    }
-                }
+                await VerifiedDownload.DownloadAsync(spec.url, spec.bytes, archive, token, progress, status).ConfigureAwait(false);
                 status("正在校验和解压 FFmpeg…");
                 return InstallArchive(root, spec, archive, token);
             }

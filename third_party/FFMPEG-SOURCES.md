@@ -1,6 +1,6 @@
 # FFmpeg source and build information
 
-BiliCacheExtractor 1.4.0 bundles **FFmpeg 8.1.3-bce-nv12.2** for Windows x64 and matching FFprobe. The static build uses **NVENC API 12.2** (nv-codec-headers 12.2.72.0). The NVIDIA interface requires Windows driver 551.76 or newer; actual encoder availability is checked on the user's computer.
+BiliCacheExtractor 1.4.1 bundles **FFmpeg 8.1.3-bce-nv12.2** for Windows x64 and matching FFprobe. The static build uses **NVENC API 12.2** (nv-codec-headers 12.2.72.0). The NVIDIA interface requires Windows driver 551.76 or newer; actual encoder availability is checked on the user's computer.
 
 ## Downloads
 
@@ -23,11 +23,11 @@ FFmpeg source commit: `1041abdc962f4cc4f394aa8de9dc5236c0c3b9e7` (tag `n8.1.3`).
 
 The resulting FFmpeg build is **GPL-3.0-or-later**. Its GPL text is in `tools/ffmpeg/LICENSE.txt`; component notices are in `tools/ffmpeg/licenses/`. x264 and x265 use GPL-2.0-or-later, dav1d uses BSD-2-Clause, zlib uses the zlib license, and nv-codec-headers/AMF/libvpl use MIT. Source archives retain original project notices. Compiler-runtime notices and the BtbN MIT recipe notice are also retained. Windows and graphics drivers are provided by the system.
 
-The application's own source and license remain **GPL-3.0-only** and are supplied separately in `BiliCacheExtractor-v1.4.0-source.zip`.
+The application's own source and license remain **GPL-3.0-only** and are supplied separately in `BiliCacheExtractor-v1.4.1-source.zip`.
 
 ## 简体中文
 
-1.4.0 内置 FFmpeg 8.1.3 的静态便携构建和 FFprobe，固定使用 NVENC API 12.2。运行包与对应源码资料包均在同一 Release 提供，哈希写入工具锁文件。
+1.4.1 内置 FFmpeg 8.1.3 的静态便携构建和 FFprobe，固定使用 NVENC API 12.2。运行包与对应源码资料包均在同一 Release 提供，哈希写入工具锁文件。
 
 源码包包含实际参与构建的八个项目源码输入、固定修订、补丁、构建脚本和环境记录。AMF 仅使用公开头文件，因此保留完整头文件及许可声明，去掉没有参与构建的示例程序、媒体样本和第三方二进制。可按源码包 README 的说明重建；便捷脚本会联网取得固定修订。
 
@@ -35,6 +35,6 @@ FFmpeg 采用 GPL-3.0-or-later，各组件保留原有许可。应用自身采�
 
 ## 繁體中文
 
-1.4.0 內建 FFmpeg 8.1.3 靜態可攜式建置與 FFprobe，固定使用 NVENC API 12.2。執行套件與對應原始碼資料包均在同一 Release 提供。
+1.4.1 內建 FFmpeg 8.1.3 靜態可攜式建置與 FFprobe，固定使用 NVENC API 12.2。執行套件與對應原始碼資料包均在同一 Release 提供。
 
 原始碼包包含八個參與建置的專案原始碼輸入、固定修訂、補丁、建置腳本與環境記錄；AMF 保留實際使用的完整公開標頭及授權聲明。依原始碼包 README 可重新建置。FFmpeg 採 GPL-3.0-or-later，應用程式採 GPL-3.0-only。

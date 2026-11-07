@@ -1,6 +1,6 @@
 # Third-party components
 
-BiliCacheExtractor invokes FFmpeg and FFprobe as separate processes. Version 1.4.0 bundles the Windows x64 **FFmpeg 8.1.3-bce-nv12.2** static build and corresponding FFprobe. It uses NVENC API 12.2 and is distributed under **GPL-3.0-or-later**. Copyright belongs to the FFmpeg developers and contributors to the included libraries.
+BiliCacheExtractor invokes FFmpeg and FFprobe as separate processes. Version 1.4.1 bundles the Windows x64 **FFmpeg 8.1.3-bce-nv12.2** static build and corresponding FFprobe. It uses NVENC API 12.2 and is distributed under **GPL-3.0-or-later**. Copyright belongs to the FFmpeg developers and contributors to the included libraries.
 
 - FFmpeg project: https://ffmpeg.org/
 - FFmpeg source: https://github.com/FFmpeg/FFmpeg/tree/1041abdc962f4cc4f394aa8de9dc5236c0c3b9e7
@@ -32,8 +32,8 @@ The application itself is **GPL-3.0-only**, copyright Sulock. Its license does n
 
 ## 简体中文
 
-1.4.0 内置 FFmpeg 8.1.3、NVENC API 12.2 的 Windows x64 静态构建及 FFprobe。FFmpeg 为 GPL-3.0-or-later，应用自身为 GPL-3.0-only。组件许可、版权和对应源码均按上述入口提供。
+1.4.1 内置 FFmpeg 8.1.3、NVENC API 12.2 的 Windows x64 静态构建及 FFprobe。FFmpeg 为 GPL-3.0-or-later，应用自身为 GPL-3.0-only。组件许可、版权和对应源码均按上述入口提供。
 
 ## 繁體中文
 
-1.4.0 內建 FFmpeg 8.1.3、NVENC API 12.2 的 Windows x64 靜態建置及 FFprobe。FFmpeg 採 GPL-3.0-or-later，應用程式採 GPL-3.0-only。元件授權、版權與對應原始碼請參閱上述連結。
+1.4.1 內建 FFmpeg 8.1.3、NVENC API 12.2 的 Windows x64 靜態建置及 FFprobe。FFmpeg 採 GPL-3.0-or-later，應用程式採 GPL-3.0-only。元件授權、版權與對應原始碼請參閱上述連結。

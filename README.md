@@ -1,4 +1,4 @@
-# BiliCacheExtractor
+﻿# BiliCacheExtractor
 
 **English** | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md)
 
@@ -22,7 +22,7 @@ Interface rendered with synthetic UI test data.
 
 ## Get started
 
-Download **1.4.0** from [Releases](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.4.0): [Windows x64 package](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.0/BiliCacheExtractor-v1.4.0-win-x64.zip) · [Source ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.0/BiliCacheExtractor-v1.4.0-source.zip) · [SHA-256 checksums](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.0/SHA256SUMS.txt).
+Download **1.4.1** from [Releases](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.4.1): [Windows x64 package](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.1/BiliCacheExtractor-v1.4.1-win-x64.zip) · [Source ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.1/BiliCacheExtractor-v1.4.1-source.zip) · [SHA-256 checksums](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.1/SHA256SUMS.txt).
 
 Tested on **Windows 11 23H2 x64 with .NET Framework 4.8.1**. The build targets x64 and uses Windows APIs for the interface, hardware information and Recycle Bin. Python is only needed if you choose to regenerate the icon.
 
@@ -100,7 +100,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\run.ps1
 
 Close the desktop app before rebuilding. Tests generate synthetic media and do not require personal Bilibili caches. Optional `-CachePath 'C:\path\to\cache'` uses an existing extractable video for cancellation testing. `-Recycle` additionally exercises real Windows recycling and restoration of files created by the tests in `verification/`.
 
-Version 1.4.0 passed 110 checks: 18 tool-management checks, 39 media checks, 46 UI checks, and 7 Recycle Bin planning checks. Tests cover generated media, CPU and available GPU transcoding, output decoding, stream hashes, cancellation, UI languages, tool selection and verified archive installation. Intel/AMD routing uses test doubles when corresponding hardware is unavailable. Real recycle/restore is opt-in.
+Version 1.4.1 passed 113 checks: 21 tool-management checks, 39 media checks, 46 UI checks, and 7 Recycle Bin planning checks. Tests cover generated media, CPU and available GPU transcoding, output decoding, stream hashes, cancellation, UI languages, tool selection and verified archive installation. Intel/AMD routing uses test doubles when corresponding hardware is unavailable. Real recycle/restore is opt-in.
 
 Source layout:
 
@@ -112,7 +112,7 @@ Source layout:
 - `Install-FFmpeg.ps1` and `tools/ffmpeg-recommended.json`: install the pinned media-tool distribution after verifying its checksum.
 - `package.ps1`: builds release packages from a committed revision, including the corresponding source ZIP and SHA-256 checksums.
 
-To reproduce the offline package, run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\package.ps1 -Version 1.4.0 -Commit HEAD -FFmpegArchive 'C:\path\to\FFmpeg-8.1.3-bce-nv12.2-win-x64.zip' -FFmpegSourceKit 'C:\path\to\FFmpeg-8.1.3-bce-nv12.2-source-kit.zip'`. Use the separate FFmpeg runtime ZIP and source-kit ZIP supplied with the release; the script verifies their pinned hashes. Output goes to `release-v1.4.0/`; choose a fresh `-OutputDirectory` for another build.
+To reproduce the offline package, run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\package.ps1 -Version 1.4.1 -Commit HEAD -FFmpegArchive 'C:\path\to\FFmpeg-8.1.3-bce-nv12.2-win-x64.zip' -FFmpegSourceKit 'C:\path\to\FFmpeg-8.1.3-bce-nv12.2-source-kit.zip'`. Use the separate FFmpeg runtime ZIP and source-kit ZIP supplied with the release; the script verifies their pinned hashes. Output goes to `release-v1.4.1/`; choose a fresh `-OutputDirectory` for another build.
 
 ## Feedback
 

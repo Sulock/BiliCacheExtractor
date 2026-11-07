@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+﻿// SPDX-License-Identifier: GPL-3.0-only
 // Copyright (C) 2026 Sulock
 using System;
 using System.IO;
@@ -10,8 +10,8 @@ using System.Collections.Generic;
 
 [assembly: AssemblyTitle("Bilibili 缓存提取器")]
 [assembly: AssemblyDescription("无损提取、CPU 与显卡转码")]
-[assembly: AssemblyVersion("1.4.0.0")]
-[assembly: AssemblyFileVersion("1.4.0.0")]
+[assembly: AssemblyVersion("1.4.1.0")]
+[assembly: AssemblyFileVersion("1.4.1.0")]
 [assembly: AssemblyCopyright("Copyright (C) 2026 Sulock")]
 
 namespace BiliExtractor

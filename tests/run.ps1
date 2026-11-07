@@ -8,7 +8,7 @@ $projectRoot = Split-Path $PSScriptRoot -Parent
 $compiler = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
 $testExe = Join-Path $projectRoot 'verification\IntegrationTests.exe'
 New-Item -ItemType Directory -Path (Join-Path $projectRoot 'verification') -Force | Out-Null
-$coreSources = @('Core.cs','Encoding.cs','HardwareInfo.cs','Localization.cs','CacheRecycle.cs','MediaTools.cs','MediaToolText.cs') | ForEach-Object { Join-Path (Join-Path $projectRoot 'src') $_ }
+$coreSources = @('Core.cs','Encoding.cs','HardwareInfo.cs','Localization.cs','CacheRecycle.cs','MediaTools.cs','MediaToolText.cs','VerifiedDownload.cs') | ForEach-Object { Join-Path (Join-Path $projectRoot 'src') $_ }
 $toolsTest = Join-Path $projectRoot 'verification\MediaToolsTests.exe'
 & $compiler /nologo /target:exe /platform:x64 /optimize+ /utf8output ("/out:" + $toolsTest) /r:System.dll /r:System.Core.dll /r:System.Web.Extensions.dll /r:System.Management.dll /r:System.IO.Compression.dll /r:System.IO.Compression.FileSystem.dll @coreSources (Join-Path $PSScriptRoot 'MediaToolsTests.cs')
 if ($LASTEXITCODE -ne 0) { throw 'Media tools test compilation failed.' }

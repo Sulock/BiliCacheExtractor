@@ -1,4 +1,4 @@
-﻿BiliCacheExtractor 1.4.0 - Windows x64
+﻿BiliCacheExtractor 1.4.1 - Windows x64
 
 简体中文
 解压整个程序包，双击 BiliCacheExtractor.exe 即可使用。
