@@ -22,20 +22,29 @@
 
 ## 開始使用
 
-目前原始碼版本為 **1.3.0**。可下載的程式套件正在準備中；目前請依照以下步驟從原始碼建置。正式程式套件發布後可在 [Releases](https://github.com/Sulock/BiliCacheExtractor/releases) 下載。
+**1.3.0** 下載入口：[Release 頁面](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.3.0) · [Windows x64 程式套件](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.0/BiliCacheExtractor-v1.3.0-win-x64.zip) · [原始碼 ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.0/BiliCacheExtractor-v1.3.0-source.zip) · [SHA-256 驗證檔案](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.0/SHA256SUMS.txt)。
 
 已驗證環境為 **Windows 11 23H2 x64、.NET Framework 4.8.1**。程式編譯為 x64，介面、硬體偵測和資源回收筒功能使用 Windows API。只有重新產生圖示時需要 Python。
 
-1. 下載或複製本儲存庫。
-2. 從 [FFmpeg 下載頁](https://ffmpeg.org/download.html)列出的提供者取得 Windows x64 版 **FFmpeg 與 FFprobe**。所需編碼器及目錄結構請參閱[媒體工具說明](tools/README.md)。
-3. 將 `ffmpeg.exe` 和 `ffprobe.exe` 放入 `tools/`；共享建置所需的 DLL 一併保留在這些 EXE 旁邊。
-4. 在專案目錄的 PowerShell 中執行：
+### 下載執行
+
+1. 將 Windows x64 程式套件解壓縮至可寫入的目錄。
+2. 首次使用時執行 `Install-FFmpeg.cmd`，連線從 BtbN/FFmpeg-Builds 下載約 86 MiB 的固定建置，核對 SHA-256 後將 FFmpeg/FFprobe 安裝至 `tools/ffmpeg/`。
+3. 按兩下 `BiliCacheExtractor.exe`。
+
+套件包含編譯好的 GUI、CLI 和對應的應用程式原始碼 ZIP。FFmpeg 另行下載，其授權條款與來源記錄保存在 `tools/ffmpeg/LICENSE.txt` 和 `tools/ffmpeg/SOURCE-INFO.txt`。已手動設定相容媒體工具的使用者可以跳過安裝。離線安裝與手動設定請參閱[媒體工具說明](tools/README.md)。
+
+### 從原始碼建置
+
+1. 解壓縮原始碼 ZIP 或複製本儲存庫。
+2. 執行 `Install-FFmpeg.cmd`，或依照[媒體工具說明](tools/README.md)手動設定 FFmpeg/FFprobe。
+3. 在原始碼目錄的 PowerShell 中執行：
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build.ps1
 ```
 
-5. 按兩下產生的 `BiliCacheExtractor.exe`。
+4. 按兩下產生的 `BiliCacheExtractor.exe`。
 
 建置使用 Windows .NET Framework C# 編譯器，無需下載 NuGet 套件。編譯 C# 不需要 FFmpeg；執行軟體和媒體測試時需要。系統缺少 .NET Framework 4.8.1 時，請先安裝該執行階段。
 
@@ -97,6 +106,10 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\run.ps1
 - `assets/`：可編輯的 SVG 圖示與產生的 PNG、ICO。
 - `tools/make-icon.py`：可選的圖示產生器，需要 Python 3.9+、Pillow 與 NumPy。
 - `build.ps1`：使用系統 C# 編譯器產生 GUI 與 CLI。
+- `Install-FFmpeg.ps1` 與 `tools/ffmpeg.lock.json`：驗證下載後安裝固定版本的媒體工具。
+- `package.ps1`：從已提交的原始碼建置發布套件，附上對應原始碼 ZIP 和 SHA-256 驗證檔案。
+
+重現發布套件可執行 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\package.ps1 -Version 1.3.0 -Commit HEAD`，輸出位於 `release-v1.3.0/`。腳本會保留既有產物；再次建置時請用 `-OutputDirectory` 指定新的輸出目錄。
 
 ## 回報問題
 

@@ -109,6 +109,7 @@ namespace BiliExtractor
         string Locate(string file)
         {
             string[] places = { System.IO.Path.Combine(Root, "tools", file),
+                System.IO.Path.Combine(Root, "tools", "ffmpeg", "bin", file),
                 System.IO.Path.Combine(Root, "ffmpeg-master-latest-win64-gpl-shared", "bin", file),
                 System.IO.Path.Combine(Root, file) };
             string found = places.FirstOrDefault(File.Exists);

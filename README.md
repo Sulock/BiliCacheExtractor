@@ -22,20 +22,29 @@ Interface rendered with synthetic UI test data.
 
 ## Get started
 
-The current source version is **1.3.0**. A packaged release is being prepared. Build from source using the steps below; [Releases](https://github.com/Sulock/BiliCacheExtractor/releases) will contain downloadable builds when published.
+Download **1.3.0** from [Releases](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.3.0): [Windows x64 package](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.0/BiliCacheExtractor-v1.3.0-win-x64.zip) · [Source ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.0/BiliCacheExtractor-v1.3.0-source.zip) · [SHA-256 checksums](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.0/SHA256SUMS.txt).
 
 Tested on **Windows 11 23H2 x64 with .NET Framework 4.8.1**. The build targets x64 and uses Windows APIs for the interface, hardware information and Recycle Bin. Python is only needed if you choose to regenerate the icon.
 
-1. Download or clone this repository.
-2. Obtain a Windows x64 build of **FFmpeg and FFprobe** from the providers linked on the [FFmpeg download page](https://ffmpeg.org/download.html). See [media tool setup](tools/README.md) for required encoders and file placement.
-3. Put `ffmpeg.exe` and `ffprobe.exe` in `tools/`. For a shared build, keep its required DLLs beside the executables.
-4. Run the following from the project folder:
+### Download and run
+
+1. Extract the Windows x64 package to a writable folder.
+2. Run `Install-FFmpeg.cmd` once with an internet connection. It downloads about 86 MiB from BtbN/FFmpeg-Builds, verifies the pinned SHA-256 and installs FFmpeg/FFprobe under `tools/ffmpeg/`.
+3. Start `BiliCacheExtractor.exe`.
+
+The package contains the compiled GUI/CLI and the matching application source ZIP. FFmpeg is downloaded separately; its license and origin are retained as `tools/ffmpeg/LICENSE.txt` and `tools/ffmpeg/SOURCE-INFO.txt`. If you already supplied compatible media tools manually, skip setup. See [media tool setup](tools/README.md) for offline installation and manual configuration.
+
+### Build from source
+
+1. Extract the source ZIP or clone this repository.
+2. Run `Install-FFmpeg.cmd`, or configure FFmpeg/FFprobe manually as described in [media tool setup](tools/README.md).
+3. Run the following from the source folder:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build.ps1
 ```
 
-5. Start `BiliCacheExtractor.exe`.
+4. Start `BiliCacheExtractor.exe`.
 
 The build uses the Windows .NET Framework C# compiler and does not restore NuGet packages. FFmpeg is needed to run the application and media tests, but not to compile the C# application. Install .NET Framework 4.8.1 if it is missing.
 
@@ -97,6 +106,10 @@ Source layout:
 - `assets/`: editable SVG icon and generated PNG/ICO files.
 - `tools/make-icon.py`: optional icon generator, using Python 3.9+, Pillow and NumPy.
 - `build.ps1`: builds the GUI and CLI with the system C# compiler.
+- `Install-FFmpeg.ps1` and `tools/ffmpeg.lock.json`: install the pinned media-tool distribution after verifying its checksum.
+- `package.ps1`: builds release packages from a committed revision, including the corresponding source ZIP and SHA-256 checksums.
+
+To reproduce a release package from a committed revision, run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\package.ps1 -Version 1.3.0 -Commit HEAD`. Output goes to `release-v1.3.0/`; existing artifacts are preserved, so choose a fresh `-OutputDirectory` for another build.
 
 ## Feedback
 

@@ -22,20 +22,29 @@
 
 ## 开始使用
 
-当前源码版本为 **1.3.0**。可下载程序包正在准备中；目前请按以下步骤从源码构建。正式程序包发布后可在 [Releases](https://github.com/Sulock/BiliCacheExtractor/releases) 下载。
+**1.3.0** 下载入口：[Release 页面](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.3.0) · [Windows x64 程序包](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.0/BiliCacheExtractor-v1.3.0-win-x64.zip) · [源码 ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.0/BiliCacheExtractor-v1.3.0-source.zip) · [SHA-256 校验文件](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.0/SHA256SUMS.txt)。
 
 已验证环境为 **Windows 11 23H2 x64、.NET Framework 4.8.1**。程序编译为 x64，界面、硬件检测和回收站功能使用 Windows API。只有重新生成图标时需要 Python。
 
-1. 下载或克隆本仓库。
-2. 从 [FFmpeg 下载页](https://ffmpeg.org/download.html)列出的提供方取得 Windows x64 版 **FFmpeg 与 FFprobe**。所需编码器及目录结构见[媒体工具说明](tools/README.md)。
-3. 将 `ffmpeg.exe` 和 `ffprobe.exe` 放入 `tools/`；共享构建所需的 DLL 一并保留在这些 EXE 旁边。
-4. 在项目目录的 PowerShell 中运行：
+### 下载运行
+
+1. 将 Windows x64 程序包解压到可写目录。
+2. 首次使用时运行 `Install-FFmpeg.cmd`，联网从 BtbN/FFmpeg-Builds 下载约 86 MiB 的固定构建，核对 SHA-256 后将 FFmpeg/FFprobe 安装到 `tools/ffmpeg/`。
+3. 双击 `BiliCacheExtractor.exe`。
+
+程序包包含编译好的 GUI、CLI 和对应的应用源码 ZIP。FFmpeg 单独下载，其许可证与来源记录保存在 `tools/ffmpeg/LICENSE.txt` 和 `tools/ffmpeg/SOURCE-INFO.txt`。已经手动配置兼容媒体工具的用户可以跳过安装。离线安装与手动配置见[媒体工具说明](tools/README.md)。
+
+### 从源码构建
+
+1. 解压源码 ZIP 或克隆本仓库。
+2. 运行 `Install-FFmpeg.cmd`，或按[媒体工具说明](tools/README.md)手动配置 FFmpeg/FFprobe。
+3. 在源码目录的 PowerShell 中运行：
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build.ps1
 ```
 
-5. 双击生成的 `BiliCacheExtractor.exe`。
+4. 双击生成的 `BiliCacheExtractor.exe`。
 
 构建使用 Windows .NET Framework C# 编译器，无需下载 NuGet 包。编译 C# 不需要 FFmpeg；运行软件和媒体测试时需要。系统缺少 .NET Framework 4.8.1 时请先安装该运行时。
 
@@ -97,6 +106,10 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\run.ps1
 - `assets/`：可编辑 SVG 图标与生成的 PNG、ICO。
 - `tools/make-icon.py`：可选图标生成器，需要 Python 3.9+、Pillow 与 NumPy。
 - `build.ps1`：使用系统 C# 编译器生成 GUI 与 CLI。
+- `Install-FFmpeg.ps1` 与 `tools/ffmpeg.lock.json`：校验下载后安装固定版本的媒体工具。
+- `package.ps1`：从已提交的源码构建发布包，附上对应源码 ZIP 和 SHA-256 校验文件。
+
+复现发布包可运行 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\package.ps1 -Version 1.3.0 -Commit HEAD`，输出位于 `release-v1.3.0/`。脚本保留已有产物；再次构建时用 `-OutputDirectory` 指定新的输出目录。
 
 ## 反馈问题
 

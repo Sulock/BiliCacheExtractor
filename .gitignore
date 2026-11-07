@@ -20,6 +20,8 @@
 /ffprobe.exe
 /tools/*.exe
 /tools/*.dll
+/tools/ffmpeg/
+/.ffmpeg-setup-*/
 
 # Build and editor output
 bin/
