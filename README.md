@@ -22,22 +22,20 @@ Interface rendered with synthetic UI test data.
 
 ## Get started
 
-Download **1.3.1** from [Releases](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.3.1): [Windows x64 package](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/BiliCacheExtractor-v1.3.1-win-x64.zip) · [Source ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/BiliCacheExtractor-v1.3.1-source.zip) · [SHA-256 checksums](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/SHA256SUMS.txt).
+Download **1.4.0** from [Releases](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.4.0): [Windows x64 package](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.0/BiliCacheExtractor-v1.4.0-win-x64.zip) · [Source ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.0/BiliCacheExtractor-v1.4.0-source.zip) · [SHA-256 checksums](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.0/SHA256SUMS.txt).
 
 Tested on **Windows 11 23H2 x64 with .NET Framework 4.8.1**. The build targets x64 and uses Windows APIs for the interface, hardware information and Recycle Bin. Python is only needed if you choose to regenerate the icon.
 
 ### Download and run
 
 1. Extract the Windows x64 package to a writable folder.
-2. Start `BiliCacheExtractor.exe`. FFmpeg, FFprobe and their required DLLs are already included.
+2. Start `BiliCacheExtractor.exe`. The package includes the portable **FFmpeg 8.1.3 build with NVENC API 12.2**, plus FFprobe.
 
-The offline package contains the compiled GUI/CLI, the local FFmpeg build and the matching application source ZIP. FFmpeg's license and source information are retained as `tools/ffmpeg/LICENSE.txt` and `tools/ffmpeg/SOURCE-INFO.txt`. The same Release provides [FFmpeg source and build materials](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/FFmpeg-N-128122-source-build-kit.zip); see [source locations and build instructions](third_party/FFMPEG-SOURCES.md). The included FFmpeg can use CPU encoding when a GPU driver does not support its NVENC API.
+Open **FFmpeg tools** beside the hardware information to use the bundled version, select a local installation, search local PATH entries, or download the recommended version. A tool check shows the exact executable paths and CPU/GPU support for H.264 and H.265. The selected FFmpeg/FFprobe pair is used consistently. If the tools are missing, the configuration window opens before the main interface.
 
-### Older NVIDIA drivers
+The NVIDIA interface in the bundled build requires Windows driver **551.76 or newer**; NVIDIA H.264/H.265 encoding has been verified on an RTX 4060 Ti with driver 560.94. Lossless extraction does not require a video encoder. See [tool setup](tools/README.md) and [FFmpeg source and build information](third_party/FFMPEG-SOURCES.md).
 
-The separate [1.3.1 legacy-driver Release](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.3.1-legacy) adds a one-time setup for FFmpeg 4.2.2. Download its [Windows x64 package](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1-legacy/BiliCacheExtractor-v1.3.1-legacy-win-x64.zip), extract it, run `Install-Legacy-FFmpeg.cmd` with internet access (22 MB), then start the application. Subsequent use is offline. The downloaded executable is identical to the original local compatibility tool. NVIDIA H.264 and H.265 passed on RTX 4060 Ti with driver 560.94; automatic mode selects the compatible encoder after probing it. See [setup, provenance and license](LEGACY-FFMPEG.md).
-
-To build this release variant, add `-LegacySetup` to the `package.ps1` command below. Its application version remains 1.3.1; the `-legacy` suffix identifies the packaging variant.
+![FFmpeg configuration](assets/tools-en.png)
 
 ### Build from source
 
@@ -102,7 +100,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\run.ps1
 
 Close the desktop app before rebuilding. Tests generate synthetic media and do not require personal Bilibili caches. Optional `-CachePath 'C:\path\to\cache'` uses an existing extractable video for cancellation testing. `-Recycle` additionally exercises real Windows recycling and restoration of files created by the tests in `verification/`.
 
-The 2026-11-06 verification passed **39 media checks, 24 UI checks and 7 Recycle Bin planning checks**. It included actual CPU and NVIDIA H.264/H.265 exports, output decoding, compressed-stream hashes, fallback behavior and cancellation. NVIDIA tests run when the encoder is available. Intel/AMD selection was tested with simulated tools; real Intel/AMD hardware was not available in this run. The default verification did not execute the optional real recycle/restore test.
+Version 1.4.0 passed 110 checks: 18 tool-management checks, 39 media checks, 46 UI checks, and 7 Recycle Bin planning checks. Tests cover generated media, CPU and available GPU transcoding, output decoding, stream hashes, cancellation, UI languages, tool selection and verified archive installation. Intel/AMD routing uses test doubles when corresponding hardware is unavailable. Real recycle/restore is opt-in.
 
 Source layout:
 
@@ -111,10 +109,10 @@ Source layout:
 - `assets/`: editable SVG icon and generated PNG/ICO files.
 - `tools/make-icon.py`: optional icon generator, using Python 3.9+, Pillow and NumPy.
 - `build.ps1`: builds the GUI and CLI with the system C# compiler.
-- `Install-FFmpeg.ps1` and `tools/ffmpeg.lock.json`: install the pinned media-tool distribution after verifying its checksum.
+- `Install-FFmpeg.ps1` and `tools/ffmpeg-recommended.json`: install the pinned media-tool distribution after verifying its checksum.
 - `package.ps1`: builds release packages from a committed revision, including the corresponding source ZIP and SHA-256 checksums.
 
-To reproduce the offline package, run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\package.ps1 -Version 1.3.1 -Commit HEAD -FFmpegDirectory 'C:\path\to\ffmpeg' -FFmpegSourceArchive 'C:\path\to\FFmpeg-215351c1c3-source.tar.gz'`. Use the bundled FFmpeg files and the source archive from the FFmpeg source/build kit; the script verifies their pinned hashes. Output goes to `release-v1.3.1/`; choose a fresh `-OutputDirectory` for another build.
+To reproduce the offline package, run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\package.ps1 -Version 1.4.0 -Commit HEAD -FFmpegArchive 'C:\path\to\FFmpeg-8.1.3-bce-nv12.2-win-x64.zip' -FFmpegSourceKit 'C:\path\to\FFmpeg-8.1.3-bce-nv12.2-source-kit.zip'`. Use the separate FFmpeg runtime ZIP and source-kit ZIP supplied with the release; the script verifies their pinned hashes. Output goes to `release-v1.4.0/`; choose a fresh `-OutputDirectory` for another build.
 
 ## Feedback
 

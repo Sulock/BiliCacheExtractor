@@ -1,11 +1,6 @@
 name: Package portable FFmpeg source and runtime notices
 on:
   workflow_dispatch:
-  push:
-    branches: [codex/ffmpeg-management]
-    paths:
-      - tools/repack-ffmpeg.py
-      - .github/workflows/repack-portable-ffmpeg.yml
 permissions:
   contents: read
   actions: read

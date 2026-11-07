@@ -1,69 +1,55 @@
-# FFmpeg setup / 媒体工具配置
+# FFmpeg setup / 媒体工具配置 / 媒體工具設定
 
-[English README](../README.md) | [简体中文说明](../README.zh-CN.md) | [繁體中文說明](../README.zh-TW.md)
-
-## English
-
-The **1.3.1 offline Release** already includes FFmpeg/FFprobe and the required DLLs under `tools/ffmpeg/`. Start the application directly. The bundled build and file hashes are recorded in [ffmpeg-bundle.lock.json](ffmpeg-bundle.lock.json); its [source and build materials](../third_party/FFMPEG-SOURCES.md) are provided with the Release.
-
-The separate `v1.3.1-legacy` package also includes `Install-Legacy-FFmpeg.cmd`. Run it once to download the FFmpeg 4.2.2 fallback encoder (22 MB); later use is offline. The pinned executable matches the local compatibility tool and is installed alongside the main FFmpeg. See [legacy setup and provenance](../LEGACY-FFMPEG.md).
-
-For a source checkout, the optional `Install-FFmpeg.cmd` downloads the separate development build pinned in [ffmpeg.lock.json](ffmpeg.lock.json). It checks the archive size and SHA-256 before extraction and preserves the complete upstream distribution and license. Its first download needs an internet connection (about 86 MiB).
-
-```text
-BiliCacheExtractor.exe
-BiliCacheExtractor.Cli.exe
-tools/
-  ffmpeg.lock.json
-  ffmpeg/
-    LICENSE.txt
-    SOURCE-INFO.txt
-    bin/
-      ffmpeg.exe
-      ffprobe.exe
-      ...required DLLs...
-```
-
-For offline installation, download the exact ZIP linked in `ffmpeg.lock.json` on another computer, then run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-FFmpeg.ps1 -ArchivePath 'C:\Downloads\ffmpeg.zip'`. The same checksum verification applies. Re-running setup verifies an existing installation and leaves it in place. Existing manually installed tools are preserved; skip setup if they already work, or move them to a backup folder first.
-
-FFmpeg and FFprobe run as separate executables. For manual configuration, obtain a Windows x64 build from the providers linked on the [FFmpeg download page](https://ffmpeg.org/download.html), keep its license/source information, and place `ffmpeg.exe`, `ffprobe.exe` and any required DLLs directly in `tools/`. Both executables are required, including when starting the graphical interface or requesting CLI help. Use them from the same distribution.
-
-Required capabilities:
-
-- MP4/MOV demuxing and muxing, the `subfile` protocol, and support for your source audio/video codecs.
-- `libx264` for CPU H.264 and `libx265` for CPU HEVC encoding.
-- `h264_nvenc` / `hevc_nvenc`, `h264_qsv` / `hevc_qsv`, or `h264_amf` / `hevc_amf` for the corresponding hardware, plus a compatible driver.
-- `lavfi`, color/noise sources and AAC encoding for the included media tests and encoder checks.
-
-The application tests encoders at runtime. An encoder listed by FFmpeg may still be unavailable with your GPU or driver. Lossless extraction does not require a video encoder.
-
-The application searches `tools/` first, then `tools/ffmpeg/bin/`, the legacy `ffmpeg-master-latest-win64-gpl-shared/bin/` directory, and its own directory. It does not search the system PATH. An optional `tools/ffmpeg-compat.exe` is also tested as a fallback encoder; obtain and document it separately if needed. A newer FFmpeg can require a newer graphics driver. Automatic mode can use CPU encoding when the hardware encoder is unavailable.
-
-Inspect your installed build with:
-
-```powershell
-.\tools\ffmpeg\bin\ffmpeg.exe -version
-.\tools\ffmpeg\bin\ffmpeg.exe -L
-.\tools\ffmpeg\bin\ffmpeg.exe -encoders
-.\tools\ffmpeg\bin\ffprobe.exe -version
-```
-
-The source repository excludes FFmpeg binaries. The offline Release bundles build **N-128122-g215351c1c3-20261027**, under **GPL-3.0-or-later**. Its original `LICENSE.txt` is preserved and `SOURCE-INFO.txt` points to the source/build kit and fixed dependency source locations. See [third-party notices](../THIRD_PARTY_NOTICES.md).
+[English](../README.md) | [简体中文](../README.zh-CN.md) | [繁體中文](../README.zh-TW.md)
 
 ## 简体中文
 
-**1.3.1 离线程序包**已在 `tools/ffmpeg/` 中内置 FFmpeg、FFprobe 和配套 DLL，解压后直接运行程序。内置版本和文件哈希见 `ffmpeg-bundle.lock.json`，对应的主源码、依赖源码来源及构建资料见[源码说明](../third_party/FFMPEG-SOURCES.md)。
+1.4.0 程序包默认内置 FFmpeg 8.1.3 的 Windows x64 静态便携构建，使用 NVENC API 12.2；扫描由同包 FFprobe 完成。解压即可使用，不修改系统 PATH，也不需要安装系统服务。
 
-单独的 `v1.3.1-legacy` 兼容包还提供 `Install-Legacy-FFmpeg.cmd`。首次运行时下载约 22 MB，安装与本地相同的 FFmpeg 4.2.2 兼容编码器；以后可离线使用，主 FFmpeg 保留。详见[兼容配置与来源说明](../LEGACY-FFMPEG.md)。
+在主窗口点击 **FFmpeg 设置**：
 
-从源码检出时，可选用 `Install-FFmpeg.cmd` 下载 `ffmpeg.lock.json` 指定的另一套开发用构建。脚本核对大小与 SHA-256 后安装，保留原始发行目录、GPL-3.0-or-later 许可证与来源记录。首次下载约 86 MiB，重复运行会核对已有安装。
+- **使用内置版本**：检测程序包里的工具，然后点击“使用所选版本”。
+- **选择本地版本**：选择包含 `ffmpeg.exe` 和 `ffprobe.exe` 的目录，或其上级目录。共享构建需要保留配套 DLL。程序会检查两者版本、MP4/subfile 支持，并实际测试编码器。
+- **扫描本地 PATH**：查找系统 PATH 中的本地绝对路径，以及程序已下载的版本。不会遍历整块磁盘。
+- **下载推荐版本**：下载 `ffmpeg-recommended.json` 固定的版本，验证大小及 SHA-256，解压到独立目录并测试。点击“使用所选版本”后生效。取消或失败不会替换已有版本。
 
-离线安装时，先下载 `ffmpeg.lock.json` 中指定的 ZIP，再运行 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-FFmpeg.ps1 -ArchivePath 'C:\Downloads\ffmpeg.zip'`，脚本仍会校验下载。已有手动配置可直接使用；需要换用自动配置时，先将旧工具移至备份目录。
+选项保存在程序旁 `media-tools.json`。下载的版本位于 `tools/downloads/`，应用内路径以相对路径保存，方便整体移动。下载需要联网，配置完成后可离线处理本地缓存。
 
-也可从 [FFmpeg 下载页](https://ffmpeg.org/download.html)列出的提供方取得 Windows x64 版 FFmpeg 与 FFprobe，保留发行方的许可证和源码信息，将两个 EXE 与共享构建所需的 DLL 直接放入 `tools/`。
+用户明确选择一套工具后，应用使用该套 FFmpeg/FFprobe，不会偷偷调用旧版 4.2.2。自动编码设备模式仍按 NVIDIA、Intel、AMD、CPU 选择可用设备；无损提取不需要视频编码器。
 
-CPU 转码需要 `libx264`、`libx265`，硬件转码需要对应的 NVENC、QSV 或 AMF 编码器以及兼容的显卡驱动。扫描与提取需要 MP4/MOV、`subfile` 协议及源媒体编码支持；测试需要 `lavfi`、色块/噪声源与 AAC 编码。程序会实际初始化编码器，检测通过后才提供对应选项。
+推荐构建的 NVIDIA 接口最低驱动为 551.76，最终能否硬件编码以实际检测为准。显卡驱动版本在配置窗口显示；低于要求时仍可使用 CPU 或选择其他本地工具。
 
-查找顺序是 `tools/`、`tools/ffmpeg/bin/`、旧目录 `ffmpeg-master-latest-win64-gpl-shared/bin/`、程序根目录，不读取系统 PATH。可选的 `tools/ffmpeg-compat.exe` 用于尝试兼容编码器；需要时单独取得并记录其来源。新版 FFmpeg 可能要求更高版本的显卡驱动；硬件编码不可用时，自动模式可使用 CPU 编码。
+命令行可用 `--ffmpeg-dir 'C:\path\to\bin'` 临时指定工具，不修改保存的选择。`--help` 不再要求事先安装 FFmpeg。
 
-源码仓库不存储 FFmpeg 二进制。离线 Release 内置 `N-128122-g215351c1c3-20261027` 构建，保留其 GPL-3.0-or-later 许可证，并提供主源码、构建配方、补丁及依赖源码的固定来源清单。
+```powershell
+.\BiliCacheExtractor.Cli.exe --hardware --ffmpeg-dir 'C:\path\to\bin'
+.\BiliCacheExtractor.exe --configure-ffmpeg
+# 可选：直接下载并选择推荐版本
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-FFmpeg.ps1 -Download
+# 可选：从已下载且匹配固定哈希的 ZIP 配置
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-FFmpeg.ps1 -ArchivePath 'C:\Downloads\FFmpeg-8.1.3-bce-nv12.2-win-x64.zip'
+```
+
+源码和许可见 [FFMPEG-SOURCES.md](../third_party/FFMPEG-SOURCES.md)。不再需要 FFplay 或单独的 legacy 下载步骤。
+
+## English
+
+The 1.4.0 portable package bundles FFmpeg 8.1.3 built for Windows x64 with NVENC API 12.2, alongside matching FFprobe. No system installation or PATH modification is required.
+
+Open **FFmpeg tools** to select the bundled version, browse for a local installation, discover tools on local PATH entries, or download the recommended version. Checks validate the FFmpeg/FFprobe pair, MP4/subfile support and real encoder initialization. Shared builds must keep their accompanying DLLs. Click **Use selected** to apply a successfully checked installation.
+
+The recommended download is pinned by URL, length and SHA-256 in `ffmpeg-recommended.json`. It is extracted into a separate folder under `tools/downloads/`. Failed/cancelled downloads preserve existing installations. The choice is saved in `media-tools.json`; application-local paths remain relative for portability. Downloads need internet access; normal use is offline.
+
+An explicit tool selection is honored without a hidden FFmpeg 4.2.2 fallback. Automatic encoder selection still tries available NVIDIA, Intel and AMD devices before CPU. Driver versions and per-codec results are displayed. The recommended NVIDIA build requires Windows driver 551.76 or later; hardware support is tested before use.
+
+Use `--ffmpeg-dir` for a temporary CLI override. `--help` works without media tools installed. `Install-FFmpeg.ps1 -Download` installs and selects the pinned version; `-ArchivePath` uses a verified local ZIP. See [source and license information](../third_party/FFMPEG-SOURCES.md).
+
+## 繁體中文
+
+1.4.0 套件內建 FFmpeg 8.1.3、NVENC API 12.2 的 Windows x64 靜態可攜式建置與 FFprobe，不需要安裝至系統或修改 PATH。
+
+點選 **FFmpeg 設定**，可使用內建版本、選擇本機版本、掃描本機 PATH，或下載建議版本。程式會檢查 FFmpeg/FFprobe 配對、MP4/subfile 支援與實際編碼能力；共享建置需保留配套 DLL。檢查完成後，點選「使用所選版本」。
+
+下載會驗證大小與 SHA-256，放入 `tools/downloads/` 的獨立目錄；失敗或取消時保留原有安裝。選擇儲存在 `media-tools.json`，程式內的路徑採相對路徑，便於整體移動。首次下載需連網，之後可離線使用。
+
+選定工具後，程式使用該套 FFmpeg/FFprobe，無損提取不需要視訊編碼器。驅動版本與各編碼器結果會顯示在設定視窗中。授權條款及原始碼請參閱上述連結。

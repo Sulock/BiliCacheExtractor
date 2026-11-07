@@ -6,18 +6,19 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using System.Reflection;
+using System.Collections.Generic;
 
 [assembly: AssemblyTitle("Bilibili 缓存提取器")]
 [assembly: AssemblyDescription("无损提取、CPU 与显卡转码")]
-[assembly: AssemblyVersion("1.3.1.0")]
-[assembly: AssemblyFileVersion("1.3.1.0")]
+[assembly: AssemblyVersion("1.4.0.0")]
+[assembly: AssemblyFileVersion("1.4.0.0")]
 [assembly: AssemblyCopyright("Copyright (C) 2026 Sulock")]
 
 namespace BiliExtractor
 {
     static class Program
     {
-        const string Usage = "用法：--hardware 查看硬件与编码能力；--scan 缓存目录；--export 缓存目录 输出目录 copy|h264|h265 [测试秒数] [--device auto|cpu|nvidia|intel|amd]。设备默认 auto，旧参数 gpu 表示 NVIDIA H.264。";
+        const string Usage = "用法：--hardware 查看硬件与编码能力；--scan 缓存目录；--export 缓存目录 输出目录 copy|h264|h265 [测试秒数] [--device auto|cpu|nvidia|intel|amd]。可用 --ffmpeg-dir 目录 临时指定工具。--configure-ffmpeg 打开配置窗口。设备默认 auto。";
 
         [STAThread]
         static int Main(string[] args)
@@ -25,7 +26,46 @@ namespace BiliExtractor
             string root = AppDomain.CurrentDomain.BaseDirectory;
             try
             {
-                var engine = new Engine(root);
+                var options = new List<string>(args); string explicitDirectory = null;
+                int toolOption = options.IndexOf("--ffmpeg-dir");
+                if (toolOption >= 0) {
+                    if (toolOption + 1 >= options.Count) throw new ArgumentException(Usage);
+                    explicitDirectory = options[toolOption + 1]; options.RemoveRange(toolOption, 2);
+                }
+                args = options.ToArray();
+                if (args.Length == 1 && (args[0] == "--help" || args[0] == "-h")) { Console.WriteLine(Usage); return 0; }
+                if (args.Length >= 1 && args[0] == "--install-ffmpeg") {
+                    if (args.Length > 2) throw new ArgumentException("--install-ffmpeg [本地 ZIP 路径]");
+                    var spec = MediaToolDownload.Load(root);
+                    if (spec == null) throw new InvalidDataException("未配置推荐下载。");
+                    MediaToolInstallation installed;
+                    if (args.Length == 2) installed = MediaToolInstaller.InstallArchive(root, spec, args[1], CancellationToken.None);
+                    else {
+                        int lastProgress = -10;
+                        installed = MediaToolInstaller.DownloadAsync(root, spec, CancellationToken.None,
+                            (done, total) => { int percent = (int)(done * 100 / total); if (percent >= lastProgress + 10) { Console.WriteLine("Download: " + percent + "%"); lastProgress = percent; } }, Console.WriteLine).GetAwaiter().GetResult();
+                    }
+                    MediaTools.Save(root, installed); Console.WriteLine("FFmpeg ready: " + installed.Directory); return 0;
+                }
+                bool configure = args.Length == 1 && args[0] == "--configure-ffmpeg";
+                string problem = null;
+                var installation = explicitDirectory == null ? MediaTools.Resolve(root, out problem) : MediaTools.FindPair(explicitDirectory, "local");
+                if (installation != null) {
+                    var check = MediaToolInspector.Inspect(installation, CancellationToken.None, null, false);
+                    if (!check.Valid) { problem = check.Error; installation = null; }
+                }
+                if (args.Length == 0 || configure) {
+                    Application.EnableVisualStyles(); Application.SetCompatibleTextRenderingDefault(false);
+                    if (installation == null || configure) {
+                        using (var dialog = new MediaToolsDialog(root, installation, new Localizer { Language = MediaTools.ReadLanguage(root) }, problem)) {
+                            if (dialog.ShowDialog() != DialogResult.OK) return 0;
+                            installation = dialog.SelectedInstallation;
+                        }
+                    }
+                    if (configure) return 0;
+                }
+                if (installation == null) throw new FileNotFoundException(problem ?? "未找到 FFmpeg 和 FFprobe。请使用 --ffmpeg-dir 指定目录，或打开图形界面配置工具。");
+                var engine = new Engine(root, installation);
                 if (args.Length > 0)
                 {
                     // CLI shares the exact scanner and exporter used by the desktop UI.
@@ -73,7 +113,6 @@ namespace BiliExtractor
                     }
                     throw new ArgumentException(Usage);
                 }
-                Application.EnableVisualStyles(); Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new MainForm(engine)); return 0;
             }
             catch (Exception ex)

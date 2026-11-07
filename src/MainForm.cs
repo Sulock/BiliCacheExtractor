@@ -25,7 +25,7 @@ namespace BiliExtractor
 
     public sealed class MainForm : Form
     {
-        readonly Engine engine;
+        Engine engine;
         readonly Icon applicationIcon;
         readonly Color ink = Color.FromArgb(27, 42, 61), muted = Color.FromArgb(99, 115, 135), blue = Color.FromArgb(33, 103, 224);
         readonly TextBox source = new TextBox(), destination = new TextBox(), search = new TextBox(), logs = new TextBox(), gpu = new TextBox();
@@ -128,7 +128,7 @@ namespace BiliExtractor
 
             var hardware = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 3,
                 BackColor = Color.White, Padding = new Padding(12, 6, 12, 6), Margin = new Padding(0, 0, 0, 6) };
-            hardware.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100)); hardware.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
+            hardware.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100)); hardware.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 140));
             hardware.RowStyles.Add(new RowStyle(SizeType.Absolute, 24)); hardware.RowStyles.Add(new RowStyle(SizeType.Absolute, 22));
             hardware.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             Bind(cpu, "CPU：正在读取硬件信息…"); cpu.Dock = DockStyle.Fill; cpu.TextAlign = ContentAlignment.MiddleLeft; cpu.AutoEllipsis = true;
@@ -138,10 +138,14 @@ namespace BiliExtractor
             Bind(gpu, "GPU：正在读取型号与显存…"); gpu.Dock = DockStyle.Fill; gpu.Multiline = true; gpu.ReadOnly = true;
             gpu.BorderStyle = BorderStyle.None; gpu.BackColor = Color.White; gpu.ForeColor = muted; gpu.ScrollBars = ScrollBars.Vertical;
             Accessible(gpu, "GPU 型号与显存"); hardware.Controls.Add(gpu, 0, 2);
-            var refreshHardware = MakeButton("重新检测"); refreshHardware.Dock = DockStyle.Top;
+            var refreshHardware = MakeButton("重新检测"); refreshHardware.Width = 128;
             refreshHardware.Click += async delegate { await RefreshHardwareAsync(); };
-            hardware.Controls.Add(refreshHardware, 1, 0); hardware.SetRowSpan(refreshHardware, 3);
-            lockWhileBusy.Add(refreshHardware); main.Controls.Add(hardware, 0, 1);
+            var configureTools = MakeButton("FFmpeg 设置"); configureTools.Width = 128;
+            configureTools.Click += async delegate { await ConfigureToolsAsync(); };
+            var hardwareActions = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, WrapContents = false };
+            hardwareActions.Controls.Add(refreshHardware); hardwareActions.Controls.Add(configureTools);
+            hardware.Controls.Add(hardwareActions, 1, 0); hardware.SetRowSpan(hardwareActions, 3);
+            lockWhileBusy.Add(refreshHardware); lockWhileBusy.Add(configureTools); main.Controls.Add(hardware, 0, 1);
 
             var paths = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 4, RowCount = 2, BackColor = Color.White, Padding = new Padding(12, 8, 12, 8), Margin = new Padding(0, 3, 0, 7) };
             paths.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100)); paths.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
@@ -403,6 +407,24 @@ namespace BiliExtractor
                 string.Join(Environment.NewLine, engine.Hardware.Gpus.Select((g, i) => T("GPU {0}：{1} · {2}", i + 1, g.Name, g.MemorySummaryText(engine.Text))));
         }
 
+        async Task ConfigureToolsAsync()
+        {
+            if (busy) return;
+            string languageCode = engine.Text.Language;
+            var current = new MediaToolInstallation { Directory = Path.GetDirectoryName(engine.FFmpeg), FFmpeg = engine.FFmpeg, FFprobe = engine.FFprobe, Kind = "local" };
+            using (var dialog = new MediaToolsDialog(engine.Root, current, engine.Text))
+            {
+                if (dialog.ShowDialog(this) != DialogResult.OK) return;
+                try {
+                    engine = new Engine(engine.Root, dialog.SelectedInstallation);
+                    engine.Text.Language = languageCode;
+                    entries.Clear(); rows.Clear(); PopulateGrid(); scannedSource = "";
+                    SetStatus("FFmpeg 已切换，正在重新检测…");
+                    if (await RefreshHardwareAsync() && !closePending) await ScanAsync();
+                } catch (Exception ex) { SetStatus("无法切换 FFmpeg：{0}", ex.Message); Log(ex.ToString()); }
+            }
+        }
+
         async Task<bool> RefreshHardwareAsync()
         {
             if (busy) return false;
@@ -411,6 +433,7 @@ namespace BiliExtractor
             try
             {
                 var token = cancellation.Token;
+                Log(T("当前 FFmpeg：{0}", engine.FFmpeg));
                 await Task.Run(delegate { engine.ReadHardware(token, Log); }); UpdateHardwareLabels();
                 await Task.Run(delegate { engine.DetectEncoders(token, Log); });
                 SetStatus("硬件检测完成，可选择输出格式和编码设备。"); return true;

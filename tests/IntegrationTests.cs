@@ -66,7 +66,7 @@ static class IntegrationTests
         bool cpu = codec == "libx264" || codec == "libx265";
         bool nvidia = codec.EndsWith("_nvenc");
         bool supported = cpu || (nvidia && !File.Exists(Path.Combine(folder, "no-nvidia")) &&
-            (codec == "h264_nvenc" || Path.GetFileName(Assembly.GetExecutingAssembly().Location) == "ffmpeg-compat.exe")) ||
+            (codec == "h264_nvenc" || File.Exists(Path.Combine(folder, "hevc-nvidia")))) ||
             (codec.EndsWith("_qsv") && File.Exists(Path.Combine(folder, "intel"))) ||
             (codec.EndsWith("_amf") && File.Exists(Path.Combine(folder, "amd")));
         if (!probe && !supported) return 1;
@@ -83,13 +83,12 @@ static class IntegrationTests
     }
     static void CheckEncoderAvailability(string test, Engine realEngine, CacheEntry first)
     {
-        // This executable also acts as two deterministic encoders: the newer tool
-        // supports H.264, while only the compatibility tool supports H.265.
+        // The selected tool exposes each hardware codec independently.
         string root = Path.Combine(test, "encoder-availability"), tools = Path.Combine(root, "tools");
         Directory.CreateDirectory(tools);
         File.Copy(Assembly.GetExecutingAssembly().Location, Path.Combine(tools, "ffmpeg.exe"));
-        string compat = Path.Combine(tools, "ffmpeg-compat.exe");
-        File.Copy(Assembly.GetExecutingAssembly().Location, compat);
+        string hevcMarker = Path.Combine(tools, "hevc-nvidia");
+        File.WriteAllText(hevcMarker, "");
         File.Copy(Assembly.GetExecutingAssembly().Location, Path.Combine(tools, "ffprobe.exe"));
         File.WriteAllText(Path.Combine(tools, "real-ffmpeg.txt"), realEngine.FFmpeg);
         File.WriteAllText(Path.Combine(tools, "real-ffprobe.txt"), realEngine.FFprobe);
@@ -97,9 +96,9 @@ static class IntegrationTests
         engine.DetectEncoders(CancellationToken.None, log.Add);
         Check(engine.CanExport(ExportMode.H264, EncodingDevice.Nvidia) && engine.CanExport(ExportMode.H265, EncodingDevice.Nvidia) &&
             engine.Plans(ExportMode.H264, EncodingDevice.Auto).First().FFmpeg.EndsWith("ffmpeg.exe") &&
-            engine.Plans(ExportMode.H265, EncodingDevice.Auto).First().FFmpeg.EndsWith("ffmpeg-compat.exe"),
-            "each codec independently selects a working FFmpeg, including HEVC compatibility fallback");
-        File.Delete(compat);
+            engine.Plans(ExportMode.H265, EncodingDevice.Auto).First().FFmpeg.EndsWith("ffmpeg.exe"),
+            "each codec is checked independently on the selected FFmpeg installation");
+        File.Delete(hevcMarker);
         engine.DetectEncoders(CancellationToken.None, s => { });
         string output = Path.Combine(root, "must-not-be-created"); bool rejected = false;
         try { engine.Export(new CacheEntry { Ready = true }, output, ExportMode.H265, EncodingDevice.Nvidia, false, CancellationToken.None, p => { }, s => { }); }
@@ -118,7 +117,7 @@ static class IntegrationTests
         Check(engine.Plans(ExportMode.H264, EncodingDevice.Auto).First().Device == EncodingDevice.Amd,
             "an available AMD encoder is selected ahead of CPU");
         File.Delete(Path.Combine(tools, "amd")); File.Delete(Path.Combine(tools, "no-nvidia"));
-        File.Copy(Assembly.GetExecutingAssembly().Location, compat);
+        File.WriteAllText(hevcMarker, "");
         File.WriteAllText(Path.Combine(tools, "fail-hardware"), ""); engine.DetectEncoders(CancellationToken.None, s => { });
         log.Clear();
         string fallback = engine.Export(first, Path.Combine(root, "fallback"), ExportMode.H265, EncodingDevice.Auto, true, CancellationToken.None, p => { }, log.Add);

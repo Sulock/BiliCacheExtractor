@@ -22,22 +22,20 @@
 
 ## 開始使用
 
-**1.3.1** 下載入口：[Release 頁面](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.3.1) · [Windows x64 程式套件](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/BiliCacheExtractor-v1.3.1-win-x64.zip) · [原始碼 ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/BiliCacheExtractor-v1.3.1-source.zip) · [SHA-256 驗證檔案](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/SHA256SUMS.txt)。
+**1.4.0** 下載入口：[Release 頁面](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.4.0) · [Windows x64 程式套件](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.0/BiliCacheExtractor-v1.4.0-win-x64.zip) · [原始碼 ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.0/BiliCacheExtractor-v1.4.0-source.zip) · [SHA-256 驗證檔案](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.0/SHA256SUMS.txt)。
 
 已驗證環境為 **Windows 11 23H2 x64、.NET Framework 4.8.1**。程式編譯為 x64，介面、硬體偵測和資源回收筒功能使用 Windows API。只有重新產生圖示時需要 Python。
 
 ### 下載執行
 
 1. 將 Windows x64 程式套件解壓縮至可寫入的目錄。
-2. 按兩下 `BiliCacheExtractor.exe`。套件已包含 FFmpeg、FFprobe 及所需 DLL。
+2. 按兩下 `BiliCacheExtractor.exe`。套件內建 **FFmpeg 8.1.3、NVENC API 12.2 的可攜式建置**與 FFprobe。
 
-離線套件包含編譯好的 GUI、CLI、本機 FFmpeg 建置和對應的應用程式原始碼 ZIP。FFmpeg 授權條款與原始碼資訊保存在 `tools/ffmpeg/LICENSE.txt` 和 `tools/ffmpeg/SOURCE-INFO.txt`。同一 Release 提供 [FFmpeg 原始碼與建置資料](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/FFmpeg-N-128122-source-build-kit.zip)，詳細來源與建置方式請參閱[原始碼說明](third_party/FFMPEG-SOURCES.md)。顯示卡驅動程式不支援所需 NVENC API 時，內建 FFmpeg 可使用 CPU 編碼。
+點選硬體資訊旁的 **FFmpeg 設定**，可使用內建版本、選擇本機版本、掃描本機 PATH，或下載建議版本。偵測結果會列出實際工具路徑與 H.264/H.265 的 CPU、顯示卡編碼能力；程式使用選定的 FFmpeg/FFprobe 配套檔案。缺少工具時，啟動會先開啟設定視窗。
 
-### 舊版 NVIDIA 驅動程式
+內建建置的 NVIDIA 介面要求 Windows 驅動程式 **551.76 或更新版本**，已在 RTX 4060 Ti、560.94 驅動程式下驗證 NVIDIA H.264/H.265 編碼。無損提取不需要視訊編碼器。請參閱[工具設定](tools/README.md)與 [FFmpeg 原始碼和建置資料](third_party/FFMPEG-SOURCES.md)。
 
-另提供 [1.3.1 舊驅動相容版](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.3.1-legacy)。下載其 [Windows x64 程式套件](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1-legacy/BiliCacheExtractor-v1.3.1-legacy-win-x64.zip)，解壓縮後先執行 `Install-Legacy-FFmpeg.cmd`，連網下載約 22 MB，再開啟軟體；之後可離線使用。腳本取得的 FFmpeg 4.2.2 與原本機相容檔案完全相同，已在 RTX 4060 Ti、驅動程式 560.94 上驗證 NVIDIA H.264/H.265 編碼，自動模式會實測並選擇可用編碼器。請參閱[設定、來源與授權條款](LEGACY-FFMPEG.md)。
-
-重現此發行變體時，在下方 `package.ps1` 命令中加入 `-LegacySetup`。應用程式版本仍為 1.3.1，`-legacy` 後綴用於標示封裝方式。
+![FFmpeg 設定介面](assets/tools-zh-TW.png)
 
 ### 從原始碼建置
 
@@ -102,7 +100,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\run.ps1
 
 重新編譯前請關閉圖形介面。測試預設產生合成的音訊、視訊與緩存，不需要個人影片。可用 `-CachePath 'C:\path\to\cache'` 指定包含可提取影片的真實緩存，用於取消測試。加上 `-Recycle` 會額外對 `verification/` 中由測試建立的檔案執行真實回收與還原。
 
-2026-11-06 驗證通過 **39 項媒體測試、24 項介面測試、7 項資源回收筒計畫測試**。涵蓋 CPU 與 NVIDIA H.264/H.265 真實轉碼、輸出解碼、壓縮資料雜湊、裝置回退及取消清理。NVIDIA 測試在編碼器可用時執行。Intel/AMD 選擇邏輯使用模擬工具驗證，該次驗證沒有相應的真實硬體；預設驗證未執行可選的真實回收與還原測試。
+1.4.0 共通過 110 項檢查：18 項工具管理、39 項媒體、46 項介面與 7 項資源回收筒計畫檢查。測試涵蓋合成緩存、CPU 與可用顯示卡轉碼、輸出解碼、壓縮資料雜湊、取消清理、三語介面、工具選擇與安裝驗證。沒有對應硬體時，以模擬工具驗證 Intel/AMD 選擇邏輯；實際回收與還原仍需明確加入 -Recycle。
 
 原始碼結構：
 
@@ -111,10 +109,10 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\run.ps1
 - `assets/`：可編輯的 SVG 圖示與產生的 PNG、ICO。
 - `tools/make-icon.py`：可選的圖示產生器，需要 Python 3.9+、Pillow 與 NumPy。
 - `build.ps1`：使用系統 C# 編譯器產生 GUI 與 CLI。
-- `Install-FFmpeg.ps1` 與 `tools/ffmpeg.lock.json`：驗證下載後安裝固定版本的媒體工具。
+- `Install-FFmpeg.ps1` 與 `tools/ffmpeg-recommended.json`：驗證下載後安裝固定版本的媒體工具。
 - `package.ps1`：從已提交的原始碼建置發布套件，附上對應原始碼 ZIP 和 SHA-256 驗證檔案。
 
-重現離線套件可執行 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\package.ps1 -Version 1.3.1 -Commit HEAD -FFmpegDirectory 'C:\path\to\ffmpeg' -FFmpegSourceArchive 'C:\path\to\FFmpeg-215351c1c3-source.tar.gz'`。請使用離線套件中的 FFmpeg 檔案，以及原始碼資料套件中的主原始碼歸檔，腳本會核對固定雜湊。輸出位於 `release-v1.3.1/`；再次建置時請用 `-OutputDirectory` 指定新的輸出目錄。
+重現離線套件可執行 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\package.ps1 -Version 1.4.0 -Commit HEAD -FFmpegArchive 'C:\path\to\FFmpeg-8.1.3-bce-nv12.2-win-x64.zip' -FFmpegSourceKit 'C:\path\to\FFmpeg-8.1.3-bce-nv12.2-source-kit.zip'`。請使用同一 Release 的 FFmpeg 執行套件 ZIP 與完整原始碼資料 ZIP，腳本會核對固定雜湊。輸出位於 `release-v1.4.0/`；再次建置時請用 `-OutputDirectory` 指定新的輸出目錄。
 
 ## 回報問題
 

@@ -100,21 +100,20 @@ namespace BiliExtractor
     {
         public readonly string Root, FFmpeg, FFprobe;
         public readonly Localizer Text = new Localizer();
-        public Engine(string root)
+        public Engine(string root) : this(root, ResolveInstallation(root)) { }
+        static MediaToolInstallation ResolveInstallation(string root)
+        {
+            string problem;
+            var installation = MediaTools.Resolve(root, out problem);
+            if (installation == null) throw new FileNotFoundException(problem ?? "未找到 FFmpeg 和 FFprobe，请配置媒体工具。");
+            return installation;
+        }
+        public Engine(string root, MediaToolInstallation installation)
         {
             Root = root;
-            FFmpeg = Locate("ffmpeg.exe"); FFprobe = Locate("ffprobe.exe");
-        }
-
-        string Locate(string file)
-        {
-            string[] places = { System.IO.Path.Combine(Root, "tools", file),
-                System.IO.Path.Combine(Root, "tools", "ffmpeg", "bin", file),
-                System.IO.Path.Combine(Root, "ffmpeg-master-latest-win64-gpl-shared", "bin", file),
-                System.IO.Path.Combine(Root, file) };
-            string found = places.FirstOrDefault(File.Exists);
-            if (found == null) throw new FileNotFoundException("找不到 " + file + "。请保留程序旁的 FFmpeg 文件夹，或把工具放入 tools 文件夹。");
-            return found;
+            if (installation == null) throw new ArgumentNullException("installation");
+            FFmpeg = installation.FFmpeg;
+            FFprobe = installation.FFprobe;
         }
 
         public static string FirstLine(string s)

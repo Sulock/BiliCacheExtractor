@@ -1,0 +1,13 @@
+{
+  "version": "8.1.3-bce-nv12.2",
+  "url": "https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.0/FFmpeg-8.1.3-bce-nv12.2-win-x64.zip",
+  "bytes": 32659442,
+  "sha256": "b3cd195bc0f38cd081cead9ed682fda7eeebb43740e1ea8987fbd7c772540938",
+  "archiveRoot": "FFmpeg-8.1.3-bce-nv12.2-win-x64",
+  "license": "GPL-3.0-or-later",
+  "sourceUrl": "https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.0/FFmpeg-8.1.3-bce-nv12.2-source-kit.zip",
+  "minimumNvidiaDriver": "551.76",
+  "sourceArchive": "FFmpeg-8.1.3-bce-nv12.2-source-kit.zip",
+  "sourceSha256": "127cae8b2ce1373493687de15a9274dc2609da85046b88c297b1057358f9f4d9",
+  "sourceBytes": 36502683
+}

@@ -1,5 +1,7 @@
 # Local preferences and extracted user media
 /settings.json
+/media-tools.json
+/media-tools.json.*.tmp
 /提取的视频/
 
 # Local investigation, test output and release staging
@@ -21,6 +23,7 @@
 /tools/*.exe
 /tools/*.dll
 /tools/ffmpeg/
+/tools/downloads/
 /.ffmpeg-setup-*/
 
 # Build and editor output

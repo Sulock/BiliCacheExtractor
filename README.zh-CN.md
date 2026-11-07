@@ -22,22 +22,20 @@
 
 ## 开始使用
 
-**1.3.1** 下载入口：[Release 页面](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.3.1) · [Windows x64 程序包](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/BiliCacheExtractor-v1.3.1-win-x64.zip) · [源码 ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/BiliCacheExtractor-v1.3.1-source.zip) · [SHA-256 校验文件](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/SHA256SUMS.txt)。
+**1.4.0** 下载入口：[Release 页面](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.4.0) · [Windows x64 程序包](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.0/BiliCacheExtractor-v1.4.0-win-x64.zip) · [源码 ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.0/BiliCacheExtractor-v1.4.0-source.zip) · [SHA-256 校验文件](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.0/SHA256SUMS.txt)。
 
 已验证环境为 **Windows 11 23H2 x64、.NET Framework 4.8.1**。程序编译为 x64，界面、硬件检测和回收站功能使用 Windows API。只有重新生成图标时需要 Python。
 
 ### 下载运行
 
 1. 将 Windows x64 程序包解压到可写目录。
-2. 双击 `BiliCacheExtractor.exe`。程序包已包含 FFmpeg、FFprobe 及配套 DLL。
+2. 双击 `BiliCacheExtractor.exe`。程序包内置 **FFmpeg 8.1.3、NVENC API 12.2 的便携构建**和 FFprobe。
 
-离线程序包包含编译好的 GUI、CLI、本地 FFmpeg 构建和对应的应用源码 ZIP。FFmpeg 的许可证与源码信息保存在 `tools/ffmpeg/LICENSE.txt` 和 `tools/ffmpeg/SOURCE-INFO.txt`。同一 Release 提供 [FFmpeg 源码与构建资料](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1/FFmpeg-N-128122-source-build-kit.zip)，详细来源与构建方式见[源码说明](third_party/FFMPEG-SOURCES.md)。显卡驱动不支持所需 NVENC API 时，内置 FFmpeg 可使用 CPU 编码。
+点击硬件信息旁的 **FFmpeg 设置**，可使用内置版本、选择本地版本、扫描本地 PATH，或下载推荐版本。检测结果会列出实际工具路径及 H.264/H.265 的 CPU、显卡编码能力；程序使用用户选定的 FFmpeg/FFprobe 配套文件。缺少工具时，启动会先打开配置窗口。
 
-### 旧版 NVIDIA 驱动
+内置构建的 NVIDIA 接口要求 Windows 驱动 **551.76 或更新版本**，已在 RTX 4060 Ti、560.94 驱动下验证 NVIDIA H.264/H.265 编码。无损提取不需要视频编码器。详见[工具配置](tools/README.md)与 [FFmpeg 源码和构建资料](third_party/FFMPEG-SOURCES.md)。
 
-另提供 [1.3.1 旧驱动兼容版](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.3.1-legacy)。下载其 [Windows x64 程序包](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.3.1-legacy/BiliCacheExtractor-v1.3.1-legacy-win-x64.zip)，解压后先运行 `Install-Legacy-FFmpeg.cmd`，联网下载约 22 MB，随后打开软件；以后可以离线使用。脚本取得的 FFmpeg 4.2.2 与原本地兼容文件完全相同，已在 RTX 4060 Ti、驱动 560.94 上验证 NVIDIA H.264/H.265 编码，自动模式会实测并选择可用编码器。详见[配置、来源与许可证](LEGACY-FFMPEG.md)。
-
-复现此发布变体时，在下方 `package.ps1` 命令中增加 `-LegacySetup`。应用版本仍为 1.3.1，`-legacy` 后缀标识打包方式。
+![FFmpeg 配置界面](assets/tools-zh-CN.png)
 
 ### 从源码构建
 
@@ -102,7 +100,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\run.ps1
 
 重新编译前请关闭图形界面。测试默认生成合成音视频与缓存，不需要个人视频。可用 `-CachePath 'C:\path\to\cache'` 指定含可提取视频的真实缓存，用于取消测试。添加 `-Recycle` 会额外对 `verification/` 中由测试创建的文件执行真实回收与恢复。
 
-2026-11-06 验证通过 **39 项媒体测试、24 项界面测试、7 项回收站计划测试**。覆盖 CPU 与 NVIDIA H.264/H.265 真实转码、输出解码、压缩数据哈希、设备回退及取消清理。NVIDIA 测试在编码器可用时执行。Intel/AMD 选择逻辑使用模拟工具验证，本轮没有相应真实硬件；默认验证未执行可选的真实回收与恢复测试。
+1.4.0 共通过 110 项检查：18 项工具管理、39 项媒体、46 项界面和 7 项回收站计划检查。测试覆盖合成缓存、CPU 与可用显卡转码、输出解码、压缩数据哈希、取消清理、三语界面、工具选择和安装校验。没有对应硬件时，Intel/AMD 选择逻辑用模拟工具验证；真实回收与恢复仍需显式添加 -Recycle。
 
 源码结构：
 
@@ -111,10 +109,10 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\run.ps1
 - `assets/`：可编辑 SVG 图标与生成的 PNG、ICO。
 - `tools/make-icon.py`：可选图标生成器，需要 Python 3.9+、Pillow 与 NumPy。
 - `build.ps1`：使用系统 C# 编译器生成 GUI 与 CLI。
-- `Install-FFmpeg.ps1` 与 `tools/ffmpeg.lock.json`：校验下载后安装固定版本的媒体工具。
+- `Install-FFmpeg.ps1` 与 `tools/ffmpeg-recommended.json`：校验下载后安装固定版本的媒体工具。
 - `package.ps1`：从已提交的源码构建发布包，附上对应源码 ZIP 和 SHA-256 校验文件。
 
-复现离线包可运行 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\package.ps1 -Version 1.3.1 -Commit HEAD -FFmpegDirectory 'C:\path\to\ffmpeg' -FFmpegSourceArchive 'C:\path\to\FFmpeg-215351c1c3-source.tar.gz'`。使用离线包中的 FFmpeg 文件及源码资料包中的主源码归档，脚本会核对固定哈希。输出位于 `release-v1.3.1/`；再次构建时用 `-OutputDirectory` 指定新的输出目录。
+复现离线包可运行 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\package.ps1 -Version 1.4.0 -Commit HEAD -FFmpegArchive 'C:\path\to\FFmpeg-8.1.3-bce-nv12.2-win-x64.zip' -FFmpegSourceKit 'C:\path\to\FFmpeg-8.1.3-bce-nv12.2-source-kit.zip'`。使用同一 Release 的 FFmpeg 运行时 ZIP 与完整源码资料 ZIP，脚本会核对固定哈希。输出位于 `release-v1.4.0/`；再次构建时用 `-OutputDirectory` 指定新的输出目录。
 
 ## 反馈问题
 

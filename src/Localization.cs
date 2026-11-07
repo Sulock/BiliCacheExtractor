@@ -17,11 +17,11 @@ namespace BiliExtractor
         public string Get(string key, params object[] args)
         {
             string value = key;
-            if (Language == "en") { string translated; if (English.TryGetValue(key, out translated)) value = translated; }
+            if (Language == "en") { string translated; if (English.TryGetValue(key, out translated) || MediaToolText.English.TryGetValue(key, out translated)) value = translated; }
             else if (Language == "zh-TW") value = Traditional(key);
             return args.Length == 0 ? value : string.Format(CultureInfo.InvariantCulture, value, args);
         }
-        public static bool HasEnglish(string key) { return English.ContainsKey(key); }
+        public static bool HasEnglish(string key) { return English.ContainsKey(key) || MediaToolText.English.ContainsKey(key); }
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
         static extern int LCMapStringEx(string locale, uint flags, string source, int sourceLength,
             StringBuilder destination, int destinationLength, IntPtr version, IntPtr reserved, IntPtr parameter);

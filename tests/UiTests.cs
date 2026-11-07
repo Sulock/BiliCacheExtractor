@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using BiliExtractor;
@@ -70,6 +71,58 @@ static class UiTests
         using (var bitmap = new Bitmap(form.Width, form.Height))
         { form.DrawToBitmap(bitmap, new Rectangle(Point.Empty, form.Size)); bitmap.Save(path, ImageFormat.Png); }
     }
+    static void CheckToolDialog(string test, string root)
+    {
+        var catalog = MediaToolDownload.Load(root) ?? new MediaToolDownload {
+            version="8.1.3-bce-nv12.2", url="https://example.invalid/runtime.zip", bytes=25165824, sha256=new string('a',64), archiveRoot="runtime", license="GPL-3.0-or-later", minimumNvidiaDriver="551.76" };
+        File.WriteAllText(Path.Combine(test, "tools", "ffmpeg-recommended.json"), new JavaScriptSerializer().Serialize(catalog));
+        foreach (string language in new[] { "zh-CN", "zh-TW", "en" }) {
+            using (var dialog = new MediaToolsDialog(test, null, new Localizer { Language = language })) {
+                var type = typeof(MediaToolsDialog);
+                var use = (Button)type.GetField("use", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(dialog);
+                Check(!use.Enabled, "tool configuration opens without installed media tools: " + language);
+                var pair = new MediaToolInstallation { Directory = @"C:\media-tools\bin", FFmpeg = @"C:\media-tools\bin\ffmpeg.exe", FFprobe = @"C:\media-tools\bin\ffprobe.exe", Kind = "builtin" };
+                var candidates = (List<MediaToolInspection>)type.GetField("candidates", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(dialog);
+                candidates.Add(new MediaToolInspection { Installation=pair, Version="8.1.3-bce-nv12.2", Valid=true, CpuH264=true, CpuH265=true, NvidiaH264=true, NvidiaH265=true });
+                CreateHandles(dialog);
+                type.GetMethod("Populate", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(dialog, new object[] { pair });
+                ((Label)type.GetField("hardwareLabel", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(dialog)).Text = "NVIDIA GeForce RTX 4060 Ti · " + new Localizer { Language=language }.Get("驱动 {0}", "560.94");
+                ((Label)type.GetField("status", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(dialog)).Text = new Localizer { Language=language }.Get("检测完成，可使用所选版本。");
+                Check(use.Enabled, "validated tool selection enables Apply: " + language);
+                var details = (TextBox)type.GetField("details", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(dialog);
+                Check(details.Text.Contains(pair.FFmpeg) && details.Text.Contains(pair.FFprobe), "tool details identify the exact executable pair: " + language);
+                foreach (int width in new[] { 940, 800 }) {
+                    dialog.ClientSize = new Size(width, width == 940 ? 650 : 570); dialog.PerformLayout();
+                    Application.DoEvents();
+                    Check(use.Bottom <= use.Parent.ClientSize.Height && use.Height >= 28, "tool dialog action buttons fit at width " + width + ": " + language);
+                    using (var bitmap = new Bitmap(dialog.Width, dialog.Height)) {
+                        dialog.DrawToBitmap(bitmap, new Rectangle(Point.Empty, dialog.Size));
+                        bitmap.Save(Path.Combine(test, "tools-" + language + "-" + width + ".png"), ImageFormat.Png);
+                    }
+                }
+                Func<CancellationToken, Task> wait = token => Task.Delay(10000, token);
+                var task = (Task)type.GetMethod("RunAsync", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(dialog, new object[] { "正在检测版本与编码能力…", wait });
+                Check(!use.Enabled, "tool changes remain locked during a running check: " + language);
+                ((Button)type.GetField("cancel", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(dialog)).PerformClick();
+                var deadline = DateTime.UtcNow.AddSeconds(3);
+                while (!task.IsCompleted && DateTime.UtcNow < deadline) { Application.DoEvents(); Thread.Sleep(10); }
+                Check(task.IsCompleted && dialog.SelectedInstallation == null, "cancelling a tool check closes without applying a selection: " + language);
+            }
+        }
+        string before = File.ReadAllText(Path.Combine(test, "settings.json"));
+        var local = MediaTools.FindPair(Path.Combine(test, "tools"), "local");
+        using (var dialog = new MediaToolsDialog(test, local, new Localizer { Language="en" })) {
+            var type = typeof(MediaToolsDialog);
+            ((List<MediaToolInspection>)type.GetField("candidates", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(dialog))
+                .Add(new MediaToolInspection { Installation=local, Version="test", Valid=true });
+            CreateHandles(dialog);
+            type.GetMethod("Populate", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(dialog, new object[] { local });
+            ((Button)type.GetField("use", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(dialog)).PerformClick();
+            string problem;
+            Check(dialog.SelectedInstallation == local && MediaTools.Resolve(test, out problem).Directory == local.Directory &&
+                File.ReadAllText(Path.Combine(test,"settings.json")) == before, "Apply persists the chosen tool pair without changing existing application preferences");
+        }
+    }
     [STAThread]
     static int Main(string[] args)
     {
@@ -81,7 +134,7 @@ static class UiTests
             string tools = Path.Combine(test, "tools"); Directory.CreateDirectory(tools);
             string encoderStub = Path.Combine(root, "verification", "IntegrationTests.exe");
             File.Copy(encoderStub, Path.Combine(tools, "ffmpeg.exe"));
-            File.Copy(encoderStub, Path.Combine(tools, "ffmpeg-compat.exe"));
+            File.WriteAllText(Path.Combine(tools, "hevc-nvidia"), "");
             File.WriteAllText(Path.Combine(tools, "ffprobe.exe"), "unused in UI tests");
             // Only the controls and settings are exercised here; media tests use real FFmpeg.
             var engine = new Engine(test); engine.DetectEncoders(CancellationToken.None, s => { });
@@ -166,7 +219,7 @@ static class UiTests
                 Check(!Field<CheckBox>(form, "decode").Enabled && Field<Button>(form, "start").Enabled,
                     "returning to lossless mode disables the decode option and permits extraction");
             }
-            File.Delete(Path.Combine(tools, "ffmpeg-compat.exe"));
+            File.Delete(Path.Combine(tools, "hevc-nvidia"));
             engine.DetectEncoders(CancellationToken.None, s => { });
             using (var form = new MainForm(engine))
             {
@@ -199,6 +252,7 @@ static class UiTests
                 using (var bitmap = new Bitmap(dialog.Width, dialog.Height))
                 { dialog.DrawToBitmap(bitmap, new Rectangle(Point.Empty, dialog.Size)); bitmap.Save(Path.Combine(test, "delete-confirmation.png"), ImageFormat.Png); }
             }
+            CheckToolDialog(test, root);
             Console.WriteLine("UI RESULT: " + passed + " checks passed. Renders: " + test);
             return 0;
         }

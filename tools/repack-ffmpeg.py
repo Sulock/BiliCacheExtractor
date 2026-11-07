@@ -1,5 +1,5 @@
 """Prepare the tested CI build for redistribution; executable bytes stay unchanged."""
-import hashlib, json, pathlib, shutil, subprocess, sys, tarfile, tempfile, zipfile
+import hashlib, json, pathlib, re, shutil, subprocess, sys, tarfile, tempfile, zipfile
 
 stage = pathlib.Path(sys.argv[1]).resolve()
 old = json.loads((stage/'artifacts.json').read_text())
@@ -30,7 +30,7 @@ with tarfile.open(amf,'r:gz') as original, tarfile.open(trimmed,'w:gz') as outpu
             output.addfile(member, original.extractfile(member) if member.isfile() else None)
 trimmed.replace(amf)
 notices=runtime/'licenses'/'compiler-runtime'
-notices.mkdir(parents=True)
+notices.mkdir(parents=True, exist_ok=True)
 for pattern in ('*mingw*/copyright','gcc-*-base/copyright'):
     for file in pathlib.Path('/usr/share/doc').glob(pattern):
         if file.is_file(): shutil.copy2(file,notices/(file.parent.name+'-copyright'))
@@ -39,10 +39,29 @@ exception=pathlib.Path('/usr/share/doc/gcc-13-base/C++/README.libstdc++-baseline
 for file in pathlib.Path('/usr/share/doc').glob('gcc-*/copyright'):
     if file.is_file() and 'RUNTIME LIBRARY EXCEPTION' in file.read_text(errors='replace').upper():
         shutil.copy2(file,notices/(file.parent.name+'-copyright'))
-shutil.copytree(notices,kit/'compiler-runtime-notices')
+if not any(notices.iterdir()): raise RuntimeError('Compiler runtime copyright notices are required')
+shutil.copytree(notices,kit/'compiler-runtime-notices',dirs_exist_ok=True)
+# NVENC headers carry the MIT text in each header, not in a root LICENSE file.
+# Also preserve any separate patent grants and notices from component roots.
+for archive_path in kit.glob('*-source.tar.gz'):
+    component=archive_path.name.removesuffix('-source.tar.gz')
+    notice_dir=runtime/'licenses'/component
+    notice_dir.mkdir(exist_ok=True)
+    with tarfile.open(archive_path,'r:gz') as source_archive:
+        for member in source_archive:
+            path=pathlib.PurePosixPath(member.name)
+            if not member.isfile(): continue
+            if len(path.parts)==2 and path.name.lower().startswith(('notice','patents','authors')):
+                (notice_dir/path.name).write_bytes(source_archive.extractfile(member).read())
+            if component=='nv-codec-headers' and member.name.endswith('.h'):
+                header=source_archive.extractfile(member).read().decode('utf-8')
+                match=re.match(r'\s*(/\*.*?\*/)',header,re.S)
+                if match and 'copyright' in match.group(1).lower():
+                    (notice_dir/(path.name+'.notice.txt')).write_text(match.group(1)+'\n')
+    if not any(notice_dir.iterdir()): raise RuntimeError('Missing component notice: '+component)
 original=kit/'build.sh'
-shutil.copy2(original,kit/'build-used-in-ci.sh')
-text=original.read_text()
+if not (kit/'build-used-in-ci.sh').exists(): shutil.copy2(original,kit/'build-used-in-ci.sh')
+text=(kit/'build-used-in-ci.sh').read_text()
 needle='cp "$recipe_dir/../ffmpeg-builds.LICENSE" "$work/source-kit/BtbN-recipes.LICENSE"'
 assert needle in text
 text=text.replace(needle,
@@ -104,6 +123,7 @@ def archive(folder,name):
     return dict(name=name,bytes=target.stat().st_size,sha256=digest(target))
 files=[archive(runtime,runtime.name+'.zip'),archive(kit,'FFmpeg-8.1.3-bce-nv12.2-source-kit.zip')]
 (out/'artifacts.json').write_text(json.dumps(dict(build=old['build'],artifacts=files,
-    buildRun=42353389139,buildCommit='a99e65056917d714082f599ee4e8cdd3c636b7e1'),indent=2)+'\n')
+    buildRun=42353389139,buildCommit='a99e65056917d714082f599ee4e8cdd3c636b7e1',
+    packagingScriptSha256=digest(pathlib.Path(__file__))),indent=2)+'\n')
 (out/'SHA256SUMS.txt').write_text(''.join(f['sha256']+'  '+f['name']+'\n' for f in files))
 print(json.dumps(files,indent=2),flush=True)

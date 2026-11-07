@@ -104,6 +104,7 @@ namespace BiliExtractor
         readonly Dictionary<string, EncoderPlan> encoders = new Dictionary<string, EncoderPlan>();
         static readonly EncodingDevice[] preference = { EncodingDevice.Nvidia, EncodingDevice.Intel, EncodingDevice.Amd, EncodingDevice.Cpu };
         public HardwareInfo Hardware { get; private set; }
+        internal void UseHardwareSnapshot(HardwareInfo hardware) { Hardware = hardware; }
         public bool EncodersDetected { get; private set; }
         public void ReadHardware(CancellationToken token, Action<string> log) { Hardware = HardwareInfo.Read(token, log, Text); }
         static string EncoderKey(ExportMode mode, EncodingDevice device) { return ExportModes.Key(mode) + ":" + EncodingDevices.Key(device); }
@@ -150,27 +151,24 @@ namespace BiliExtractor
                 if (device != EncodingDevice.Cpu && Hardware != null && Hardware.Gpus.Count > 0 && !Hardware.Gpus.Any(g => g.VendorId == vendor)) continue;
                 foreach (ExportMode mode in new[] { ExportMode.H264, ExportMode.H265 })
                 {
-                    foreach (string candidate in new[] { FFmpeg, Path.Combine(Root, "tools", "ffmpeg-compat.exe") }.Distinct())
+                    token.ThrowIfCancellationRequested();
+                    if (!File.Exists(FFmpeg)) continue;
+                    var plan = new EncoderPlan { Mode = mode, Device = device, FFmpeg = FFmpeg };
+                    try
                     {
-                        token.ThrowIfCancellationRequested();
-                        if (!File.Exists(candidate)) continue;
-                        var plan = new EncoderPlan { Mode = mode, Device = device, FFmpeg = candidate };
-                        try
+                        var args = new List<string> { "-hide_banner", "-loglevel", "error", "-nostdin", "-f", "lavfi", "-i",
+                            "color=c=black:s=640x360:r=30", "-frames:v", "10" };
+                        plan.AddVideoArguments(args, false); args.AddRange(new[] { "-f", "null", "-" });
+                        var result = ChildProcess.Run(FFmpeg, args, token, null, 15);
+                        if (result.Code == 0)
                         {
-                            var args = new List<string> { "-hide_banner", "-loglevel", "error", "-nostdin", "-f", "lavfi", "-i",
-                                "color=c=black:s=640x360:r=30", "-frames:v", "10" };
-                            plan.AddVideoArguments(args, false); args.AddRange(new[] { "-f", "null", "-" });
-                            var result = ChildProcess.Run(candidate, args, token, null, 15);
-                            if (result.Code == 0)
-                            {
-                                encoders[EncoderKey(mode, device)] = plan;
-                                log(Text.Get("编码实测通过：{0}；工具：{1}", plan.DisplayText(Text), Path.GetFileName(candidate))); break;
-                            }
-                            log(Text.Get("{0}（{1}）检测失败：{2}", plan.DisplayText(Text), Path.GetFileName(candidate), FirstLine(result.Error)));
+                            encoders[EncoderKey(mode, device)] = plan;
+                            log(Text.Get("编码实测通过：{0}；工具：{1}", plan.DisplayText(Text), Path.GetFileName(FFmpeg)));
                         }
-                        catch (OperationCanceledException) { throw; }
-                        catch (Exception ex) { log(Text.Get("{0} 检测失败：{1}", plan.DisplayText(Text), ex.Message)); }
+                        else log(Text.Get("{0}（{1}）检测失败：{2}", plan.DisplayText(Text), Path.GetFileName(FFmpeg), FirstLine(result.Error)));
                     }
+                    catch (OperationCanceledException) { throw; }
+                    catch (Exception ex) { log(Text.Get("{0} 检测失败：{1}", plan.DisplayText(Text), ex.Message)); }
                 }
             }
             EncodersDetected = true;

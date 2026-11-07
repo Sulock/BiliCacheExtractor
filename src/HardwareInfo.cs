@@ -11,7 +11,7 @@ namespace BiliExtractor
 {
     public sealed class GpuHardware
     {
-        public string Name, Id;
+        public string Name, Id, DriverVersion;
         public uint VendorId;
         public ulong DedicatedMemory;
         public ulong? SharedMemory;
@@ -101,15 +101,15 @@ namespace BiliExtractor
             // duplicate DXGI entries introduced by indirect display drivers.
             try
             {
-                var result = ChildProcess.Run("nvidia-smi.exe", new[] { "--query-gpu=uuid,name,memory.total", "--format=csv,noheader,nounits" }, token, null, 8);
+                var result = ChildProcess.Run("nvidia-smi.exe", new[] { "--query-gpu=uuid,name,memory.total,driver_version", "--format=csv,noheader,nounits" }, token, null, 8);
                 var nvidia = new List<GpuHardware>();
                 if (result.Code == 0)
                 foreach (string line in result.Output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
                 {
                     string[] fields = line.Split(','); double mib;
-                    if (fields.Length != 3 || !double.TryParse(fields[2].Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out mib) || mib <= 0) continue;
+                    if (fields.Length != 4 || !double.TryParse(fields[2].Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out mib) || mib <= 0) continue;
                     string name = fields[1].Trim(); var dxgi = info.Gpus.FirstOrDefault(g => g.VendorId == 0x10de && g.Name == name);
-                    nvidia.Add(new GpuHardware { Id = fields[0].Trim(), Name = name, VendorId = 0x10de,
+                    nvidia.Add(new GpuHardware { Id = fields[0].Trim(), Name = name, VendorId = 0x10de, DriverVersion = fields[3].Trim(),
                         DedicatedMemory = (ulong)(mib * 1048576), SharedMemory = dxgi == null ? (ulong?)null : dxgi.SharedMemory });
                 }
                 if (nvidia.Count > 0) { info.Gpus.RemoveAll(g => g.VendorId == 0x10de); info.Gpus.AddRange(nvidia); }
@@ -117,7 +117,8 @@ namespace BiliExtractor
             catch (OperationCanceledException) { throw; }
             catch (Exception) { }
             log(text.Get("CPU：{0}", info.CpuName) + " · " + info.CpuSummaryText(text));
-            foreach (var gpu in info.Gpus) log("GPU: " + gpu.Name + " · " + gpu.MemorySummaryText(text));
+            foreach (var gpu in info.Gpus) log("GPU: " + gpu.Name + " · " + gpu.MemorySummaryText(text) +
+                (string.IsNullOrEmpty(gpu.DriverVersion) ? "" : " · " + text.Get("驱动 {0}", gpu.DriverVersion)));
             return info;
         }
 

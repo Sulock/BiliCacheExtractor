@@ -1,38 +1,40 @@
 # FFmpeg source and build information
 
-The Windows offline package bundles the local FFmpeg build **N-128122-g215351c1c3-20261027** and FFprobe, with their required DLLs. This build reports **GPL-3.0-or-later**. Its original `LICENSE.txt` is included under `tools/ffmpeg/`.
+BiliCacheExtractor 1.4.0 bundles **FFmpeg 8.1.3-bce-nv12.2** for Windows x64 and matching FFprobe. The static build uses **NVENC API 12.2** (nv-codec-headers 12.2.72.0). The NVIDIA interface requires Windows driver 551.76 or newer; actual encoder availability is checked on the user's computer.
 
-## Source access
+## Downloads
 
-The [v1.3.1 Release](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.3.1) provides **FFmpeg-N-128122-source-build-kit.zip** alongside the application binaries. It contains:
+The [1.4.0 Release](https://github.com/Sulock/BiliCacheExtractor/releases/tag/v1.4.0) provides both:
 
-- The FFmpeg source archive for commit `215351c1c37dc0345a6794f4c96af54cf30e1c7b`.
-- The BtbN build recipes and patches from `autobuild-2026-10-27-18-38`, with their MIT license.
-- `ffmpeg-dependencies.json`, listing the repositories and fixed Git commits/tags or SVN revisions used by the recipe snapshot. This is the complete upstream recipe map, including recipes disabled for some build variants.
-- The binary's reported build configuration and a script that pins the FFmpeg source checkout when using the upstream build system.
+- [FFmpeg runtime ZIP](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.0/FFmpeg-8.1.3-bce-nv12.2-win-x64.zip).
+- [Corresponding source and build kit](https://github.com/Sulock/BiliCacheExtractor/releases/download/v1.4.0/FFmpeg-8.1.3-bce-nv12.2-source-kit.zip).
 
-The dependency sources are available from the upstream repositories listed in the JSON manifest. For a Git entry, clone its `repository`, check out its exact `revision`, and initialize any submodules recursively. For SVN entries, check out `repository@revision`. The build recipes also contain the source retrieval commands, patches and configuration for each component. Libraries with additional language-package dependencies retain their upstream lockfiles and build instructions.
+The source kit contains the source inputs for FFmpeg, nv-codec-headers, x264, x265, dav1d, zlib, AMD AMF headers and Intel libvpl. All eight revisions are fixed in [portable-build/sources.json](portable-build/sources.json). AMF is a header-only build dependency here: the complete public headers and root notices are retained; unused SDK samples, sample media and third-party binary files are excluded.
 
-FFmpeg source is also directly available from [the exact upstream commit](https://github.com/FFmpeg/FFmpeg/tree/215351c1c37dc0345a6794f4c96af54cf30e1c7b) and its [source archive](https://codeload.github.com/FFmpeg/FFmpeg/tar.gz/215351c1c37dc0345a6794f4c96af54cf30e1c7b). Source access is provided through these fixed upstream locations as well as the attached source/build kit.
+The kit includes x265/libvpl build patches, the original build script, a standalone variant, configure diagnostics, the Ubuntu package inventory, compiler-runtime copyright notices and archive hashes. Read the kit's README.md before rebuilding. The convenience script fetches pinned repositories and requires network access; the source archives are also supplied for inspection and independent builds.
 
-## Building FFmpeg
+## Build provenance
 
-Use a Linux environment with Docker/Buildx, Bash, Python 3 and unzip. Extract the source/build kit, then run:
+The Windows executable bytes were produced by [GitHub Actions run 42353389139](https://github.com/Sulock/BiliCacheExtractor/actions/runs/42353389139), using recipe commit `a99e65056917d714082f599ee4e8cdd3c636b7e1`. [Run 42354838999](https://github.com/Sulock/BiliCacheExtractor/actions/runs/42354838999) packages the used source inputs and notices; it verifies that the executable hashes remain unchanged.
 
-```bash
-bash build-ffmpeg-pinned.sh
-```
+FFmpeg source commit: `1041abdc962f4cc4f394aa8de9dc5236c0c3b9e7` (tag `n8.1.3`). NVENC headers commit: `c69278340ab1d5559c7d7bf0edf615dc33ddbba7` (tag `n12.2.72.0`). Runtime/archive hashes are pinned in `tools/ffmpeg-bundle.lock.json` and `tools/ffmpeg-recommended.json`.
 
-The script unpacks the preserved BtbN build system, builds its Windows x64 GPL shared dependency image, and builds FFmpeg at the specified commit. The upstream `download.sh` fetches dependency source snapshots into `.cache/downloads/`. Network access is required for those source repositories and general build tools.
+## Licenses
 
-The application and the distributed local FFmpeg binaries were tested on Windows. The FFmpeg build recipe is supplied for rebuilding; this Windows release run did not recompile FFmpeg itself.
+The resulting FFmpeg build is **GPL-3.0-or-later**. Its GPL text is in `tools/ffmpeg/LICENSE.txt`; component notices are in `tools/ffmpeg/licenses/`. x264 and x265 use GPL-2.0-or-later, dav1d uses BSD-2-Clause, zlib uses the zlib license, and nv-codec-headers/AMF/libvpl use MIT. Source archives retain original project notices. Compiler-runtime notices and the BtbN MIT recipe notice are also retained. Windows and graphics drivers are provided by the system.
+
+The application's own source and license remain **GPL-3.0-only** and are supplied separately in `BiliCacheExtractor-v1.4.0-source.zip`.
 
 ## 简体中文
 
-离线程序包内置本地主构建 `N-128122-g215351c1c3-20261027` 的 FFmpeg、FFprobe 及配套 DLL，采用 **GPL-3.0-or-later**。原始许可文件保存在 `tools/ffmpeg/LICENSE.txt`。
+1.4.0 内置 FFmpeg 8.1.3 的静态便携构建和 FFprobe，固定使用 NVENC API 12.2。运行包与对应源码资料包均在同一 Release 提供，哈希写入工具锁文件。
 
-同一 Release 中的 **FFmpeg-N-128122-source-build-kit.zip** 包含 FFmpeg 精确提交的主源码、BtbN 对应日期的构建配方和补丁、MIT 许可、二进制构建配置，以及依赖源码清单。依赖清单记录每个上游仓库和固定 Git 提交／标签或 SVN 修订号；依赖源码通过这些上游位置提供。清单覆盖整个上游构建系统，也包含当前平台或变体未启用的配方。
+源码包包含实际参与构建的八个项目源码输入、固定修订、补丁、构建脚本和环境记录。AMF 仅使用公开头文件，因此保留完整头文件及许可声明，去掉没有参与构建的示例程序、媒体样本和第三方二进制。可按源码包 README 的说明重建；便捷脚本会联网取得固定修订。
 
-在具备 Docker/Buildx、Bash、Python 3 和 unzip 的 Linux 环境中，运行 `bash build-ffmpeg-pinned.sh` 可使用固定的 FFmpeg 提交构建。上游下载脚本会将依赖源码快照放入 `.cache/downloads/`；首次准备构建工具和依赖源码需要联网。
+FFmpeg 采用 GPL-3.0-or-later，各组件保留原有许可。应用自身采用 GPL-3.0-only。显卡驱动由用户系统提供。
 
-本次验证了应用与所分发的本地 FFmpeg 二进制，未在 Windows 上重新编译 FFmpeg。应用自身的对应源码另见 `BiliCacheExtractor-v1.3.1-source.zip`。
+## 繁體中文
+
+1.4.0 內建 FFmpeg 8.1.3 靜態可攜式建置與 FFprobe，固定使用 NVENC API 12.2。執行套件與對應原始碼資料包均在同一 Release 提供。
+
+原始碼包包含八個參與建置的專案原始碼輸入、固定修訂、補丁、建置腳本與環境記錄；AMF 保留實際使用的完整公開標頭及授權聲明。依原始碼包 README 可重新建置。FFmpeg 採 GPL-3.0-or-later，應用程式採 GPL-3.0-only。
