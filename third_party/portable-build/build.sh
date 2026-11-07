@@ -82,7 +82,18 @@ cmake -S "$work/src/x265/source" -B "$work/x265-build" -G Ninja \
   -DENABLE_HDR10_PLUS=ON -DCMAKE_ASM_NASM_FLAGS=-w-macro-params-legacy
 ninja -C "$work/x265-build" -j"$jobs"
 ninja -C "$work/x265-build" install
-echo 'Libs.private: -lstdc++ -lwinpthread' >> "$prefix/lib/pkgconfig/x265.pc"
+# x265 omits pkg-config metadata for a Windows static-only build.
+cat > "$prefix/lib/pkgconfig/x265.pc" <<EOF
+prefix=$prefix
+libdir=\${prefix}/lib
+includedir=\${prefix}/include
+Name: x265
+Description: H.265/HEVC video encoder
+Version: $(git -C "$work/src/x265" rev-parse --short HEAD)
+Libs: -L\${libdir} -lx265
+Libs.private: -lstdc++ -lwinpthread
+Cflags: -I\${includedir}
+EOF
 meson setup "$work/dav1d-build" "$work/src/dav1d" --cross-file "$work/cross.meson" \
   --prefix "$prefix" --libdir lib --buildtype release --default-library static \
   -Denable_tools=false -Denable_tests=false
